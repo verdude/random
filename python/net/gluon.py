@@ -18,9 +18,3 @@ class Gluon:
 	def get(self, thingie):
 		"""get somethingie from the conf dictionary"""
 		return self.conf[thingie]
-
-
-if __name__ == "__main__":
-	glue = Gluon()
-	glue.loadAll(filepath=None)
-	print glue.get("wyviewer.email.from")
