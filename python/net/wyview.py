@@ -67,8 +67,8 @@ if __name__ == "__main__":
 
 	queries = 0
 	args = None
-	interval = int(glue.get("wyviewer.checks.interval"))
-	notify = int(glue.get("wyviewer.checks.notify"))
+	interval = lambda: int(glue.get("wyviewer.checks.interval"))
+	notify = lambda: int(glue.get("wyviewer.checks.notify"))
 	from_ = glue.get("wyviewer.email.from")
 	password = glue.get("wyviewer.email.password")
 
@@ -81,10 +81,10 @@ if __name__ == "__main__":
 		else:
 			try:
 				while checkOnceMore() == "goOn":
-					time.sleep(interval)
+					time.sleep(interval())
 					queries += 1
 					print 'checked: %i times' % queries
-					if queries % notify == 0:
+					if queries % notify() == 0:
 						break
 
 				# here send the information in an email
