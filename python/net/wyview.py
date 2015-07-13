@@ -57,9 +57,7 @@ if __name__ == "__main__":
 	from bs4 import BeautifulSoup
 	import re
 	import sys
-
-	queries = 0
-	args = None
+	import traceback
 
 	# run the configuration parser
 	# there must be a better way to import the file
@@ -67,25 +65,35 @@ if __name__ == "__main__":
 	glue = Gluon()
 	glue.loadAll(filepath = None)
 
+	queries = 0
+	args = None
+	interval = int(glue.get("wyviewer.checks.interval"))
+	notify = int(glue.get("wyviewer.checks.notify"))
+	from_ = glue.get("wyviewer.email.from")
+	password = glue.get("wyviewer.email.password")
+
 	try:
 		import argparse
-		if sys.argv.length > 1:
+		if len(sys.argv) > 1:
 			parser = argparse.ArgumentParser()
 			parser.add_argument("-e", "--emails", nargs=".+", help="enter email to send to and from")
 			args = parser.parse_args();
 		else:
-			while checkOnceMore() == "goOn":
-				time.sleep(glue.get("wyviewer.checks.interval"))
-				queries += 1
-				print 'checked: %i times' % queries
-				if queries % glue.get("wyviewer.checks.notify") == 0:
-					notifyMeh("routine update", "updation", args.email, args.password, queries)
+			try:
+				while checkOnceMore() == "goOn":
+					time.sleep(interval)
+					queries += 1
+					print 'checked: %i times' % queries
+					if queries % notify == 0:
+						break
 
-			# here send the information in an email
-			notifyMeh(content=checkOnceMore(), subject="found it bruh", to=args.emails,
-				from_=glue.get("wyviewer.email.from"), password=glue.get("wyviewer.email.password"), queries=queries)
+				# here send the information in an email
+				notifyMeh(content=checkOnceMore(), subject="found it bruh", to=args.emails,
+					from_=from_, password=password, queries=queries)
+			except:
+				notifyMeh("Hi, thars an issue.\ncode:[73] query Failure. abort checkOnceMore. restart wyview",
+					"script Broke",to=args.emails, from_=from_, password=password, queries=queries)
 
-	except:
-		notifyMeh("Hi, thars an issue.\ncode:[73] query Failure. abort checkOnceMore. restart wyview",
-			"script Broke", glue.get("wyviewer.email.from"), glue.get("wyviewer.email.password"), "santiago.verdu.01@gmail.com", queries)
+	except Exception, err:
 		print "Something broke. Program Terminated."
+		print(traceback.format_exc())
