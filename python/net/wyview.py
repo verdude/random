@@ -67,32 +67,37 @@ if __name__ == "__main__":
 
 	queries = 0
 	args = None
-	interval = lambda: int(glue.get("wyviewer.checks.interval"))
-	notify = lambda: int(glue.get("wyviewer.checks.notify"))
+	interval = int(glue.get("wyviewer.checks.interval"))
+	notify = int(glue.get("wyviewer.checks.notify"))
 	from_ = glue.get("wyviewer.email.from")
 	password = glue.get("wyviewer.email.password")
+	usage = "USAGE:\npython -u wyview.py -e emails**"
 
 	try:
 		import argparse
 		if len(sys.argv) > 1:
+			# if the -e flag was given, argv will contain:
+			# ["wyview.py", "-e", "emails**"]
 			parser = argparse.ArgumentParser()
 			parser.add_argument("-e", "--emails", nargs="+", help="enter email to send to and from")
 			args = parser.parse_args();
 		else:
-			try:
-				while checkOnceMore() == "goOn":
-					time.sleep(interval())
-					queries += 1
-					print 'checked: %i times' % queries
-					if queries % notify() == 0:
-						break
+			print usage
+			sys.exit(0)
+		try:
+			while checkOnceMore() == "goOn":
+				time.sleep(interval)
+				queries += 1
+				print 'checked: %i times' % queries
+				if queries % notify == 0:
+					break
 
-				# here send the information in an email
-				notifyMeh(content=checkOnceMore(), subject="found it bruh", to=args.emails,
-					from_=from_, password=password, queries=queries)
-			except:
-				notifyMeh("Hi, thars an issue.\ncode:[73] query Failure. abort checkOnceMore. restart wyview",
-					"script Broke",to=args.emails, from_=from_, password=password, queries=queries)
+			# send the information in an email
+			notifyMeh(content=checkOnceMore(), subject="found it bruh", to=args.emails,
+				from_=from_, password=password, queries=queries)
+		except:
+			notifyMeh("Hi, thars an issue.\ncode:[73] query Failure. abort checkOnceMore. restart wyview",
+				"script Broke",to=args.emails, from_=from_, password=password, queries=queries)
 
 	except Exception, err:
 		print "Something broke. Program Terminated."
