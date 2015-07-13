@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-	Dependencies: BeautifulSoup, requests
+	Dependencies: BeautifulSoup from beautifulsoup4, requests
 	Checks the BYU on campus housing page every minute to find if there are any
 	available beds for men at wyview.
 """
