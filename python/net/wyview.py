@@ -61,6 +61,12 @@ if __name__ == "__main__":
 	queries = 0
 	args = None
 
+	# run the configuration parser
+	# there must be a better way to import the file
+	execfile('gluon.py')
+	glue = Gluon()
+	glue.loadAll(filepath = None)
+
 	try:
 		import argparse
 		if sys.argv.length > 1:
@@ -68,12 +74,6 @@ if __name__ == "__main__":
 			parser.add_argument("-e", "--emails", nargs=".+", help="enter email to send to and from")
 			args = parser.parse_args();
 		else:
-			# run the configuration parser
-			# there must be a better way to import the file
-			execfile('gluon.py')
-
-			glue = Gluon()
-			glue.loadAll(filepath = None)
 			while checkOnceMore() == "goOn":
 				time.sleep(glue.get("wyviewer.checks.interval"))
 				queries += 1
