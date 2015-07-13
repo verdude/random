@@ -76,7 +76,7 @@ if __name__ == "__main__":
 		import argparse
 		if len(sys.argv) > 1:
 			parser = argparse.ArgumentParser()
-			parser.add_argument("-e", "--emails", nargs=".+", help="enter email to send to and from")
+			parser.add_argument("-e", "--emails", nargs="+", help="enter email to send to and from")
 			args = parser.parse_args();
 		else:
 			try:
