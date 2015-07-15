@@ -42,13 +42,13 @@ def notifyMeh(content, subject, from_, password, to, queries):
 
 	msg['Subject'] = subject
 	msg['From'] = from_
-	msg['To'] = to if queries > 0 else 'santiago.verdu.01@gmail.com'
+	msg['To'] = 'santiago.verdu.01@gmail.com'
 
 	s = smtplib.SMTP('smtp.gmail.com', 587)
 	s.ehlo()
 	s.starttls()
 	s.login(from_, password)
-	s.sendmail(msg['From'], msg['To'], msg.as_string())
+	s.sendmail(msg['From'], to, msg.as_string())
 	s.quit()
 
 if __name__ == "__main__":
@@ -86,16 +86,17 @@ if __name__ == "__main__":
 			sys.exit(0)
 		try:
 			while checkOnceMore() == "goOn":
-				time.sleep(interval)
+				time.sleep(1)
 				queries += 1
 				print 'checked: %i times' % queries
-				if queries % notify == 0:
+				if queries % 1 == 0:
 					break
 
 			# send the information in an email
 			notifyMeh(content=checkOnceMore(), subject="found it bruh", to=args.emails,
 				from_=from_, password=password, queries=queries)
-		except:
+		except Exception, err:
+			print traceback.format_exc()
 			notifyMeh("Hi, thars an issue.\ncode:[73] query Failure. abort checkOnceMore. restart wyview",
 				"script Broke",to=args.emails, from_=from_, password=password, queries=queries)
 
