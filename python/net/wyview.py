@@ -19,6 +19,7 @@ def parseInfo(html):
 	target = soup.find(id='ContentPlaceHolder1_RoomsPanel').findAll('table')[2].findAll('td')[1]
 	[x.extract() for x in target.findAll('h3')]
 	response = re.sub(r'\s+',' ', target.get_text()).strip()
+	print response
 	return "goOn" if response == 'No beds available.' else response
 
 def getPage():
@@ -42,7 +43,6 @@ def notifyMeh(content, subject, from_, password, to, queries):
 
 	msg['Subject'] = subject
 	msg['From'] = from_
-	msg['To'] = 'santiago.verdu.01@gmail.com'
 
 	s = smtplib.SMTP('smtp.gmail.com', 587)
 	s.ehlo()
@@ -86,20 +86,22 @@ if __name__ == "__main__":
 			sys.exit(0)
 		try:
 			while checkOnceMore() == "goOn":
-				time.sleep(1)
+				time.sleep(interval)
 				queries += 1
 				print 'checked: %i times' % queries
-				if queries % 1 == 0:
-					break
+				if queries % notify == 0:
+					notifyMeh(content=checkOnceMore(), subject="still chuggin", to=args.emails,
+						from_=from_, password=password, queries=queries)
 
-			# send the information in an email
+			# send the found intormation in an email
 			notifyMeh(content=checkOnceMore(), subject="found it bruh", to=args.emails,
 				from_=from_, password=password, queries=queries)
+
 		except Exception, err:
 			print traceback.format_exc()
-			notifyMeh("Hi, thars an issue.\ncode:[73] query Failure. abort checkOnceMore. restart wyview",
-				"script Broke",to=args.emails, from_=from_, password=password, queries=queries)
+			notifyMeh(content="Wyview Script Broke.", subject="script Broke",to=args.emails,
+				from_=from_, password=password, queries=queries)
 
 	except Exception, err:
-		print "Something broke. Program Terminated."
+		print "Something broke. Program Terminated.\n"
 		print(traceback.format_exc())
