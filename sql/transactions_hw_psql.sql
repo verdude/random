@@ -131,6 +131,8 @@ END;
 ### When I commit the second transaction, the transaction ends and is committed. 
 ### This happens because the other transaction has finished, the DROP TABLE transaction can go through and drop the table.
 
+## ==================================================================================
+
 ### 5. The first select statement gets all of the information about the database you are connected to. 
 ### It grabs the schema which is public for everything in this case, the relation name (employee) and displays it under Name, 
 ### the kind of relation (table or sequence) and displays it under type, and finally the relation owner and displays it under owner.
