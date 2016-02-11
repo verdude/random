@@ -1,1 +1,2 @@
-python/net/*.sv
+python/net/efy/*.conf
+python/net/efy/*.log
