@@ -5,21 +5,24 @@ var Trie = function() {
 	 * each node has a value and an array of length 26
 	 */
 	function Node(char) {
+		this.letters = new Array(26);
 		var value = char || null;
-		var array = new Array(26);
 		var freq = 0;
+		var that = this;
 
-		//instantiate array
-		for (var i = 0; i < array.length; ++i) {
-			array[i] = null;
+		//instantiate letters array
+		for (var i = 0; i < this.letters.length; ++i) {
+			this.letters[i] = null;
 		}
 		/**
 		 * Trie Class methods
 		 */
 		return {
-			getArray: function() {return array;},
 			getValue: function() {return value;},
-			incrementFreq: function() {freq++;}
+			incrementFreq: function() {freq++;},
+			nodeAt: function(index) {
+				return that.letters[index];
+			}
 		}	
 	}
 
@@ -42,15 +45,18 @@ var Trie = function() {
 				var lowerCaseWord = word.toLowerCase();
 				lowerCaseWord.split("").forEach(function(letter, index) {
 					var lastLetter = index === lowerCaseWord.length - 1 ? true: false;
-					if (prevNode[letter.charCodeAt() - LETTER_OFFSET] === null) {
+					if (prevNode.nodeAt(letter.charCodeAt() - LETTER_OFFSET) === null) {
 						var currNode = new Node(letter);
-						if (lastLetter) currNode.incrementFreq();
-						prevNode[letter.charCodeAt() - LETTER_OFFSET] = currNode;
+						if (lastLetter) 
+							currNode.incrementFreq();
+						console.log(prevNode.letters);
+						prevNode.letters[letter.charCodeAt() - LETTER_OFFSET] = currNode;
 						nodeCount++;
 						prevNode = currNode;
 					} else {
-						prevNode = prevNode[letter.charCodeAt() - LETTER_OFFSET];
-						if (lastLetter) prevNode.incrementFreq();
+						prevNode = prevNode.nodeAt(letter.charCodeAt() - LETTER_OFFSET);
+						if (lastLetter) 
+							prevNode.incrementFreq();
 					}
 				});
 				wordCount++;
@@ -72,8 +78,9 @@ var Trie = function() {
 
 var trie = new Trie();
 
-trie.insert("santi3");
-trie.insert
+trie.insert("santi");
+trie.insert("sanet");
 
 console.log(trie.getRoot());
-console.log(trie.getWordCount());
+console.log("Word Count: " + trie.getWordCount());
+console.log("Node Count: " + trie.getNodeCount());
