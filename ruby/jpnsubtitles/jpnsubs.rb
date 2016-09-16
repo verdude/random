@@ -136,8 +136,8 @@ if __FILE__ == $0
 		opts.on("-o","--out-file file","The name to give the new srt file") do |out|
 			options[:out] = out
 		end
-		opts.on("-h","--help","Prints the required arguments.") do
-			p opts
+		opts.on("-h","--help","Prints the required arguments. File will be overwritten if it already exists") do
+			puts opts
 			abort
 		end
 	end.parse!
@@ -147,7 +147,6 @@ if __FILE__ == $0
 		abort
 	end
 
-	#formatTranscription()
 	do_it_to_it(options[:txt],options[:srt],options[:out])
 end
 
