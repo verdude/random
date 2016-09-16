@@ -133,10 +133,10 @@ if __FILE__ == $0
 		opts.on("-t","--txt-file file","The txt file that contains all of the lines with punctuation") do |txt|
 			options[:txt] = txt
 		end
-		opts.on("-o","--out-file file","The name to give the new srt file") do |out|
+		opts.on("-o","--out-file file","The name to give the new srt file. File will be overwritten if it already exists") do |out|
 			options[:out] = out
 		end
-		opts.on("-h","--help","Prints the required arguments. File will be overwritten if it already exists") do
+		opts.on("-h","--help","Prints the required arguments") do
 			puts opts
 			abort
 		end
