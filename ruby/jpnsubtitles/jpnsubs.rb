@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 
 require "pry"
+require "optparse"
+
 
 class Line
-	def initialize(lines)
+	def initialize(lines,section)
 		@lines = lines.map{|x| x.chomp("\n") if x[-1] == "\n"}
-		@strLen = @lines.join.length
+		@section = section
 	end
 
 	def insertPunc(idx,punc)
@@ -15,7 +17,7 @@ class Line
 				@lines[i].insert(idx,punc)
 				break
 			else
-				idx-=@lines.length
+				idx-=@lines[i].length
 			end
 		end
 	end
@@ -55,28 +57,55 @@ def insertPuncs(txt,srt)
 	end
 end
 
-def do_it_to_it()
+def do_it_to_it(_txtFile,_captionFile,_outFile)
 	enum = IO.foreach("caps.srt",:encode=>"utf-8")
+	outFile = File.open(_outFile, "w")
+	section = 1
+	capLine = enum.next
 	IO.foreach("trans.txt",:encode=>"utf-8") do |line|
-		capLine = enum.next
+		next if line == "\n"
 		while isNum(capLine) or isTimeCode(capLine) or capLine == "\n"
-			
+			outFile.puts(capLine)
 			capLine = enum.next
 		end
-		caps = [capLine]
-		capLine = enum.next
+		caps = []
 		until isNum(capLine) or isTimeCode(capLine) or capLine == "\n"
 			caps.push(capLine)
 			capLine = enum.next
 		end
-		caption = Line.new(caps)
+		caption = Line.new(caps,section)
 		insertPuncs(line,caption)
 		lines = caption.getLines()
-		print lines.concat("\n")
-	end 
+		outFile.puts(lines)
+		section+=1
+	end
 end
 
 if __FILE__ == $0
-	do_it_to_it()
+	options = {}
+	OptionParser.new do |opts|
+		opts.banner = "Usage: jpnsubs.rb [options]"
+		opts.on("-s","--srt-file","The srt file that needs punctuation") do |srt|
+			options[:srt] = srt
+		end
+		opts.on("-t","--txt-file","The txt file that contains all of the lines with punctuation") do |txt|
+			options[:txt] = txt
+		end
+		opts.on("-o","--out-file","The name to give the new srt file") do |out|
+			options[:out] = out
+		end
+		opts.on("-h","--help","Prints the required arguments.") do
+			puts opts
+			abort
+		end
+	end.parse!
+	
+	if options[:srt].nil? or options[:txt].nil? or options[:out].nil?
+		puts "-t,-s,-o options are required.\nRun with -h for help."
+		abort
+	end
+
+	#formatTranscription()
+	do_it_to_it(options[txt],options[srt],options[out])
 end
 
