@@ -97,6 +97,9 @@ def do_it_to_it(_txtFile,_captionFile,_outFile)
 				# check the offset for punctuation and keep incrementing it until we have the original offset amount of
 				# non-punctuation characters
 				offsetStr = line[joinedCaption.length...joinedCaption.length+offset]
+				if offsetStr == nil
+					binding.pry
+				end
 				offsetStrOffset = puncs.map{|p|offsetStr.count(p)}.reduce{|total,n|total+n}
 				offsetStrOffset -= totalOffsetStrOffset
 				offset += offsetStrOffset
