@@ -2,10 +2,8 @@
 
 from twilio.rest import TwilioRestClient
 import argparse
-import subprocess
 import logging
 import json
-import time
 
 def load_config(filename):
     with open(filename) as fl:
@@ -25,8 +23,6 @@ class Texter():
 def parse_options():
     parser = argparse.ArgumentParser(prog="updates", description="Send Text", add_help=True)
 
-    parser.add_argument("-f", "--filename", action="store", help="Phone number file")
-    parser.add_argument("-c", "--config", action="store", help="twilio config filename")
     parser.add_argument("-m", "--message", action="store", help="The text message")
 
     parser.add_argument("-d", "--debug", action="store_true", help="set logging to debug")
