@@ -1,8 +1,11 @@
+#!/usr/bin/env python
+
 from twilio.rest import TwilioRestClient
 import subprocess
 import logging
 import json
 import time
+import argparse
 
 class JohnUpdate():
     def __init__(self, filename):
@@ -37,7 +40,7 @@ class Texter():
     def __init__(self, message):
         config = load_config(".tmaigrc")
         self.message = message
-        tc = TwilioRestClient(str(config["account_sid"]),ste(config["auth_token"])
+        tc = TwilioRestClient(str(config["account_sid"]),str(config["auth_token"]))
 
     def send(self):
         tc.message.create(body=self.message, to=str(config["to"]), from_=str(config["number"]))
@@ -46,11 +49,10 @@ def parse_options():
     parser = argparse.ArgumentParser(prog="updates", description="Thingie", add_help=True)
     parser.add_argument("-d", "--debug", action="store_true", help="Turn on logging")
 
-    parse.add_argument("-f", "--filename", action="store", help="Phone number file")
-    parse.add_argument("-c", "--config", action="store", help="twilio config filename")
+    parser.add_argument("-f", "--filename", action="store", help="Phone number file")
+    parser.add_argument("-c", "--config", action="store", help="twilio config filename")
 
-    parse.add_argument("-d", "--debug", action="store_true", help="set logging to debug")
-    parse.add_argument("-q", "--quiet", action="store_true", help="set logging to quiet")
+    parser.add_argument("-q", "--quiet", action="store_true", help="set logging to quiet")
     return parser.parse_args()
 
 if __name__ == "__main__":
