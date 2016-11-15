@@ -4,6 +4,7 @@ from twilio.rest import TwilioRestClient
 import argparse
 import logging
 import json
+import os
 
 def load_config(filename):
     with open(filename) as fl:
@@ -12,7 +13,7 @@ def load_config(filename):
 
 class Texter():
     def __init__(self, message):
-        self.config = load_config(".texterrc")
+        self.config = load_config(os.path.expanduser("~")+"/.texterrc")
         self.message = message
         self.tc = TwilioRestClient(str(self.config["account_sid"]),str(self.config["auth_token"]))
 
