@@ -46,6 +46,7 @@ def parse_options():
     parser.add_argument("-s", "--subject", action="store")
     parser.add_argument("-d", "--debug", action="store_true", help="set logging to debug")
     parser.add_argument("-q", "--quiet", action="store_true", help="set logging to quiet")
+    parser.add_argument("-f", "--filename", action="store", help="The configuration filename")
     return parser.parse_args()
 
 def setup_logging(args):
@@ -60,8 +61,9 @@ def setup_logging(args):
 def main():
     args = parse_options()
     setup_logging(args)
-    creds = get_creds()
+    creds = get_creds(args.filename)
     if creds is None:
+        logging.warn("config file not found...exiting")
         return
     logging.debug(creds)
     send(args, creds)
