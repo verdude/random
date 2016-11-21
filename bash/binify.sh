@@ -2,6 +2,7 @@
 
 if [ ! $# -eq 1 ]; then
 	echo "Illegal number of parameters"
+	exit
 fi
 
 if [ -f $1 ]; then
