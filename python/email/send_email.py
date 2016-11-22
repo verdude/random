@@ -79,7 +79,7 @@ def get_user_response(prompt, multi_line=False, password=False):
             exit -= 1
             if exit is 0:   
                 break
-            else: prompt = ":".rjust(12)
+            else: prompt = ": ".rjust(12)
         else:
             chunk += "\n" if exit is 2 else "\n\n"
             exit = 2
