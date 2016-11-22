@@ -6,6 +6,8 @@ import logging
 import os
 import getpass
 
+CONFIG_FILENAME = ".emailrc"
+
 def send(args, config):
     """
         Expected credentials:
@@ -32,7 +34,7 @@ def send(args, config):
 
 def get_config(config_filename=""):
     if config_filename is "":
-        config_filename = os.path.expanduser("~")+"/.send_emailrc"
+        config_filename = os.path.expanduser("~")+"/"+CONFIG_FILENAME
     try:
         with open(config_filename, "r") as config:
             return json.load(config)
@@ -77,7 +79,7 @@ def get_user_response(prompt, multi_line=False, password=False):
             exit -= 1
             if exit is 0:   
                 break
-            else: prompt = "done?: ".rjust(12)
+            else: prompt = ":".rjust(12)
         else:
             chunk += "\n" if exit is 2 else "\n\n"
             exit = 2
