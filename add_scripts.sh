@@ -7,4 +7,5 @@ binify python/email/send_email.py
 binify bash/create_start_virtualenv.sh
 
 echo 'alias envify="source create_start_virtualenv"' >> ~/.bashrc
+. ~/.bashrc
 
