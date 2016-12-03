@@ -5,6 +5,11 @@ if [ ! $# -eq 1 ]; then
     exit
 fi
 
+path=`echo $PATH | grep "/home/$USER/bin"`
+if [ -z path ]; then
+    echo 'export PATH=$PATH:~/bin' >> ~/.bashrc
+fi
+
 save() {
     echo "saving file to $fname"
     cp $1 "$fname"
