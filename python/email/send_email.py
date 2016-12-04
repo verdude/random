@@ -8,6 +8,27 @@ import getpass
 
 CONFIG_FILENAME = ".emailrc"
 
+class bcolors:
+    cols = {
+        "HEADER": '\033[95m',
+        "BLUE": '\033[94m',
+        "GREEN": '\033[92m',
+        "WARNING": '\033[93m',
+        "FAIL": '\033[91m',
+        "ENDC": '\033[0m',
+        "BOLD": '\033[1m',
+        "UNDERLINE": '\033[4m'
+    }
+
+    @staticmethod
+    def color(s, c="BLUE", b=False, u=False):
+        decorators = bcolors.cols[c]
+        if b:
+            decorators += bcolors.cols["BOLD"]
+        if u:
+            decorators += bcolors.cols["UNDERLINE"]
+        return "%s%s%s" % (decorators,s,bcolors.cols["ENDC"])
+
 def send(args, config):
     """
         Expected credentials:
@@ -31,10 +52,12 @@ def send(args, config):
     s.login(config["email"], config["password"])
     s.sendmail(msg['From'], args.to, msg.as_string())
     s.quit()
+    logging.info(bcolors.OKGREEN + bcolors.BOLD + "Success: Email sent." + bcolors.ENDC)
 
 def get_config(config_filename=""):
-    if config_filename is "":
+    if config_filename is "" or config_filename is None:
         config_filename = os.path.expanduser("~")+"/"+CONFIG_FILENAME
+        logging.debug("Setting conf filename: %s", config_filename)
     try:
         with open(config_filename, "r") as config:
             return json.load(config)
@@ -53,7 +76,7 @@ def parse_options():
     parser.add_argument("-s", "--subject", action="store")
     parser.add_argument("-d", "--debug", action="store_true", help="set logging to debug")
     parser.add_argument("-q", "--quiet", action="store_true", help="set logging to quiet")
-    parser.add_argument("-f", "--filename", action="store", help="The configuration filename")
+    parser.add_argument("-c", "--config", action="store", help="The configuration filename")
     return parser.parse_args()
 
 def setup_logging(args):
@@ -99,9 +122,12 @@ def get_fields(args):
 def main():
     args = parse_options()
     setup_logging(args)
-    config = get_config(args.filename)
+    config = get_config(args.config)
     args = get_fields(args)
     send(args, config)
 
-main()
+try:
+    main()
+except KeyboardInterrupt:
+    print "\n" + bcolors.color("Caught Keyboard Interrupt. Exiting.", "WARNING", b=True)
 
