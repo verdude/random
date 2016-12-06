@@ -51,7 +51,7 @@ def send(args, config):
     s.login(config["email"], config["password"])
     s.sendmail(msg['From'], args.to, msg.as_string())
     s.quit()
-    logging.info(bcolors.OKGREEN + bcolors.BOLD + "Success: Email sent." + bcolors.ENDC)
+    logging.info(bcolors.color("Success: Email sent.","GREEN",b=True))
 
 def get_config(config_filename=""):
     logging.debug(bcolors.color("Config Filename: %s" % config_filename, "BLUE"))
