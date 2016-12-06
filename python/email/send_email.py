@@ -5,6 +5,8 @@ import argparse
 import logging
 import os
 import getpass
+import smtplib
+from email.mime.text import MIMEText
 
 CONFIG_FILENAME = ".emailrc"
 
@@ -38,9 +40,6 @@ def send(args, config):
             password=the outgoing email password, string
             to=the target emails, list of strings
     """
-    import smtplib
-    from email.mime.text import MIMEText
-
     msg = MIMEText(args.message)
 
     msg['Subject'] = args.subject
@@ -55,6 +54,7 @@ def send(args, config):
     logging.info(bcolors.OKGREEN + bcolors.BOLD + "Success: Email sent." + bcolors.ENDC)
 
 def get_config(config_filename=""):
+    logging.debug(bcolors.color("Config Filename: %s" % config_filename, "BLUE"))
     if config_filename is "" or config_filename is None:
         config_filename = os.path.expanduser("~")+"/"+CONFIG_FILENAME
         logging.debug("Setting conf filename: %s", config_filename)
@@ -124,7 +124,10 @@ def main():
     setup_logging(args)
     config = get_config(args.config)
     args = get_fields(args)
-    send(args, config)
+    try:
+        send(args, config)
+    except smtplib.SMTPRecipientsRefused, e:
+        logging.error(bcolors.color("[%s]'s probly not an email." % args.to, "FAIL", b=True))
 
 try:
     main()
