@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo $2 | at $1
+echo "/home/snt/bin/send_text -m $2" | at $1
 
