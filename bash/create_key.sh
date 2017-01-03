@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Use the default for the name"
-sh-keygen -t rsa -b 4096 -C "santiago.verdu.01@gmail.com"
+ssh-keygen -t rsa -b 4096 -C "santiago.verdu.01@gmail.com"
 ssh_agent=`eval "$(ssh-agent -s)"`
 if [[ ! -z ssh_agent ]]; then
     ssd-add ~/.ssh/id_rsa

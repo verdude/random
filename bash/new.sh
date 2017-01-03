@@ -1,9 +1,11 @@
 #!/bin/bash
 
-got_got=`which git`
-if [ -z $got_git ]; then
+gotgot=`which git`
+if [[ -z $gotgit ]]; then
+    echo "$USER"
+    echo "$gotgit"
     echo "git is not installed"
-elif
+else
     git config --global alias.slog "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 fi
 
