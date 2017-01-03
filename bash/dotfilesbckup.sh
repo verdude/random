@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd ~
-if [[ ! -d docs ]]; then
-    printf "Making docs directory..."
-    mkdir docs
+if [[ ! -d docs/dotfiles ]]; then
+    echo "Making docs/dotfiles..."
+    mkdir -p docs/dotfiles
 fi
 if [[ -d .emacs.d ]]; then
     echo "Backing up emacs conf..."
