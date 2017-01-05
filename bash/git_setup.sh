@@ -10,8 +10,13 @@ generate() {
     # generates keys for github
     echo "Make sure to name the key pair 'id_rsa'"
     ssh-keygen -t rsa -b 4096 -C "santiago.verdu.01@gmail.com"
-    eval "$(ssh-agent -s)"
-    confirm "Did the ssh-agent run?" && ssh-add ~/.ssh/id_rsa
+    ssh_agent=`eval "$(ssh-agent -s)"`
+    if [[ ! -z ssh_agent ]]; then
+        ssd-add ~/.ssh/id_rsa
+        echo "Adding id_rsa to ssh-agent"
+    else
+        echo "ssh_agent not found"
+    fi
 }
 
 # prompts the user whether or not they wish to execute some following command.
