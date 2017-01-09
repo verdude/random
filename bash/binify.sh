@@ -1,13 +1,8 @@
 #!/bin/bash
 
-if [ ! $# -eq 1 ]; then
+if [[ $# -gt 2 ]] || [[ $# -le 0 ]]; then
     echo "Illegal number of parameters"
     exit
-fi
-
-path=`echo $PATH | grep "/home/$USER/bin"`
-if [ -z path ]; then
-    echo 'export PATH=$PATH:~/bin' >> ~/.bashrc
 fi
 
 save() {
@@ -29,22 +24,56 @@ confirm() {
             ;;
         *)
             false
-            #need to create a way to loop back to the read statement.
             ;;
     esac
 }
 
-if [ -f $1 ]; then
-    if [ ! -d ~/bin ]; then
-        mkdir ~/bin
-    fi
-    fname=~/bin/`python -c "print '$1'.split('/')[-1].split('.')[0]"`
+localrun() {
+    fname=/usr/local/bin/$(python -c "print '$1'.split('/')[-1].split('.')[0]")
     if [ -f $fname ]; then
         echo "that script already exists..."
         confirm "Do you want to overwrite the file?" && save $1 $fname
         exit
+    else
+        save $1 $fname
     fi
-    save $1 $fname
+}
+
+run() {
+    if [[ ! -d ~/bin ]]; then
+        mkdir ~/bin
+    fi
+    path=`echo $PATH | grep "/home/$USER/bin"`
+    if [ -z path ]; then
+        echo 'export PATH=$PATH:~/bin' >> ~/.bashrc
+    fi
+
+    fname=~/bin/$(python -c "print '$1'.split('/')[-1].split('.')[0]")
+    if [ -f $fname ]; then
+        echo "that script already exists..."
+        confirm "Do you want to overwrite the file?" && save $1 $fname
+        exit
+    else
+        save $1 $fname
+    fi
+}
+
+if [[ $1 == "--local" ]] || [[ $1 == "-l" ]]; then
+    if [[ $UID -eq 0 ]]; then
+        if [[ -f $2 ]]; then
+            localrun $2
+        else
+            echo "file does not exist"
+        fi
+    else
+        echo "need root to save in /usr/local/bin"
+    fi
+elif [[ -f $1 ]]; then
+    if [[ $UID -ne 0 ]]; then
+        run $1
+    else
+        echo "dont use root to save in ~/bin"
+    fi
 else
     echo "file does not exist..."
 fi
