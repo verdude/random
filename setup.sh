@@ -1,7 +1,7 @@
 #!/bin/bash
 
 get_docs () {
-    scp snt@spooq.website:~/docs.tgz.enc ~
+    scp snt@spooq.website:~/bkup/docs.tgz.enc ~
     openssl enc -d -aes-256-cbc -in docs.tgz.enc -out docs.tgz
     tar xjf docs.tgz
 }
