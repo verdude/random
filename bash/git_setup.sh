@@ -1,6 +1,6 @@
 #!/bin/bash
 
-got_got=`which git`
+got_git=$(which git)
 if [ -z $got_git ]; then
     echo "git is not installed"
     exit 1
