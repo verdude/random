@@ -34,19 +34,19 @@ compress_encrypt() {
         exit 1
     fi
     echo "compressing docs..."
-    tar cjf docs.tgz docs
-    openssl enc -aes-256-cbc -in docs.tgz | base64 > docs.tgz.enc
+    tar cjf docs.bz2 docs
+    openssl enc -aes-256-cbc -in docs.bz2 -out docs.bz2.enc
     echo "cleanup..."
-    rm docs.tgz
+    rm docs.bz2
     rm -rf ~/docs/dotfiles
     rm -rf ~/docs/.emacs.d
 }
 
 backup () {
     cd ~
-    if [[ -f docs.tgz.enc ]]; then
+    if [[ -f docs.bz2.enc ]]; then
         echo "Backing up to spooq.website..."
-        scp docs.tgz.enc snt@spooq.website:~/bkup/docs.tgz.enc
+        scp docs.bz2.enc snt@spooq.website:~/bkup/docs.bz2.enc
     else
         echo "encrypted file not found."
     fi

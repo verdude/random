@@ -1,9 +1,10 @@
 #!/bin/bash
 
 get_docs () {
-    scp snt@spooq.website:~/bkup/docs.tgz.enc ~
-    openssl enc -d -aes-256-cbc -in ~/docs.tgz.enc -out docs.tgz
-    tar xjf docs.tgz
+    scp snt@spooq.website:~/bkup/docs.bz2.enc ~
+    openssl enc -d -aes-256-cbc -in ~/docs.bz2.enc -out docs.bz2
+    tar xjf docs.bz2
+    rm docs.bz2*
 }
 
 get_dotfiles () {
