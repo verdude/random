@@ -29,9 +29,11 @@ setup_git () {
     if [[ -z $got_git ]]; then
         sudo apt install git
     fi
-    mkdir ~/github && cd github
-    git clone https://github.com/verude/random && cd random
     ./add_scripts.sh
     git_setup
 }
+
+get_docs
+get_dotfiles
+setup_git
 
