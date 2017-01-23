@@ -11,6 +11,7 @@ get_docs () {
 get_dotfiles () {
     if [[ -d ~/docs/dotfiles ]]; then
         echo "copying dotfiles"
+        ls -al ~/docs/dotfiles
         cp ~/docs/dotfiles/.* ~
         rm -rf ~/docs/dotfiles
         source ~/.bashrc
