@@ -4,7 +4,7 @@ get_docs () {
     scp snt@spooq.website:~/bkup/docs.bz2.enc ~
     openssl enc -d -aes-256-cbc -in ~/docs.bz2.enc -out ~/docs.bz2
     echo "extracting..."
-    tar xjf ~/docs.bz2
+    tar xjf ~/docs.bz2 -C ~/
     rm ~/docs.bz2*
 }
 
