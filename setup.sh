@@ -2,7 +2,8 @@
 
 get_docs () {
     scp snt@spooq.website:~/docs.tgz.enc ~
-    openssl enc -d -aes-256-cbc docs.tgz.enc
+    openssl enc -d -aes-256-cbc -in docs.tgz.enc -out docs.tgz
+    tar xjf docs.tgz
 }
 
 get_dotfiles () {
@@ -10,6 +11,7 @@ get_dotfiles () {
         echo "copying dotfiles"
         cp ~/docs/dotfiles/.* ~
         rm -rf ~/docs/dotfiles
+        source ~/.bashrc
     else
         echo "~/docs/dotfiles not found"
     fi

@@ -1,6 +1,10 @@
 #!/bin/bash
 
 chmod 775 bash/binify.sh
+home_bin=$(echo $PATH | grep ~/bin)
+if [[ -z $home_bin ]]; then
+    echo 'export PATH=$PATH:~/bin' > ~/.bashrc;
+fi
 bash/binify.sh bash/binify.sh
 binify python/twilio/send_text.py
 binify python/email/send_email.py
