@@ -10,7 +10,7 @@ dotfiles(){
     cd ~
     if [[ ! -d docs/dotfiles ]]; then
         echo "Making docs/dotfiles..."
-        mkdir -p docs/dotfiles
+        mkdir docs/dotfiles
     fi
     if [[ -d .emacs.d ]]; then
         echo "Backing up emacs conf..."
@@ -36,6 +36,8 @@ compress_encrypt() {
     tar cjf docs.tgz docs
     openssl enc -aes-256-cbc -in docs.tgz | base64 > docs.tgz.enc
     rm docs.tgz
+    rm -rf ~/docs/dotfiles
+    rm -rf ~/docs/.emacs.d
 }
 
 backup () {
