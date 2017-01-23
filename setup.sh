@@ -2,7 +2,7 @@
 
 get_docs () {
     scp snt@spooq.website:~/bkup/docs.tgz.enc ~
-    openssl enc -d -aes-256-cbc -in docs.tgz.enc -out docs.tgz
+    openssl enc -d -aes-256-cbc -in ~/docs.tgz.enc -out docs.tgz
     tar xjf docs.tgz
 }
 
