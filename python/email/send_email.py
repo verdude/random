@@ -94,13 +94,13 @@ def get_user_response(prompt, multi_line=False, password=False):
     exit = 2
     while 1:
         chunk = getpass.getpass(prompt=prompt) if password else raw_input(prompt)
-        if not multi_line:  
+        if not multi_line:
             response = chunk
             break
         else: prompt = "cont: ".rjust(12)
         if chunk is "":
             exit -= 1
-            if exit is 0:   
+            if exit is 0:
                 break
             else: prompt = ": ".rjust(12)
         else:
@@ -111,7 +111,7 @@ def get_user_response(prompt, multi_line=False, password=False):
     return response
 
 def get_fields(args):
-    if args.message is None:    
+    if args.message is None:
         args.message = get_user_response("message", True)
     if args.to is None:
         args.to = get_user_response("to")
