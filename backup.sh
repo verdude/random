@@ -33,8 +33,10 @@ compress_encrypt() {
         echo "Docs directory not found. Exiting."
         exit 1
     fi
+    echo "compressing docs..."
     tar cjf docs.tgz docs
     openssl enc -aes-256-cbc -in docs.tgz | base64 > docs.tgz.enc
+    echo "cleanup..."
     rm docs.tgz
     rm -rf ~/docs/dotfiles
     rm -rf ~/docs/.emacs.d
@@ -43,6 +45,7 @@ compress_encrypt() {
 backup () {
     cd ~
     if [[ -f docs.tgz.enc ]]; then
+        echo "Backing up to spooq.website..."
         scp docs.tgz.enc snt@spooq.website:~/bkup/docs.tgz.enc
     else
         echo "encrypted file not found."
@@ -53,4 +56,5 @@ check_size
 dotfiles
 compress_encrypt
 backup
+echo "Done"
 
