@@ -11,9 +11,11 @@ get_docs () {
 get_dotfiles () {
     if [[ -d ~/docs/dotfiles ]]; then
         echo "copying dotfiles"
-        for f in $(ls -pa ~/docs/dotfiles | grep -v /); do
+        pushd ~/docs/dotfiles
+        for f in $(ls -pa | grep -v /); do
             mv $f ~
         done
+        popd
         exit
         rm -rf ~/docs/dotfiles
         source ~/.bashrc
