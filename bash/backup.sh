@@ -22,6 +22,7 @@ dotfiles(){
     cd ~
     cp .*rc docs/dotfiles/
     cp .bash_aliases docs/dotfiles/
+    cp .bash_profile docs/dotfiles/
 }
 
 check_size() {
