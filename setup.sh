@@ -14,6 +14,7 @@ get_dotfiles () {
         for f in $(ls -pa ~/docs/dotfiles | grep -v /); do
             mv $f ~
         done
+        exit
         rm -rf ~/docs/dotfiles
         source ~/.bashrc
     else
