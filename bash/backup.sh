@@ -59,7 +59,6 @@ cleanup () {
     rm -rf ~/docs/.emacs.d
 }
 
-binify bash/annotate_repo.sh
 gitxclude
 
 # check_size
