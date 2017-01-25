@@ -4,7 +4,7 @@ cd ~/github/random
 chmod 775 bash/binify.sh
 home_bin=$(echo $PATH | grep ~/bin)
 if [[ -z $home_bin ]]; then
-    echo 'export PATH=$PATH:~/bin' > ~/.bashrc;
+    echo 'export PATH=$PATH:~/bin' >> ~/.bashrc;
 fi
 rel=$(echo ~/bin/)
 bash/binify.sh bash/binify.sh $1

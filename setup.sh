@@ -35,7 +35,8 @@ setup_git () {
     if [[ -z $got_git ]]; then
         sudo apt install git
     fi
-    git_setup
+    chmod 775 bash/git_setup.sh
+    bash/git_setup.sh
 }
 
 setup_vim () {
