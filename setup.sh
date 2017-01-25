@@ -11,8 +11,9 @@ get_docs () {
 get_dotfiles () {
     if [[ -d ~/docs/dotfiles ]]; then
         echo "copying dotfiles"
-        ls -al ~/docs/dotfiles
-        cp -r ~/docs/dotfiles/. ~
+        for f in $(ls -pa ~/docs/dotfiles | grep -v /); do
+            mv $f ~
+        done
         rm -rf ~/docs/dotfiles
         source ~/.bashrc
     else
@@ -32,11 +33,17 @@ setup_git () {
     if [[ -z $got_git ]]; then
         sudo apt install git
     fi
-    ./add_scripts.sh
     git_setup
+}
+
+setup_vim () {
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    vim -c "PluginInstall|qa"
 }
 
 get_docs
 get_dotfiles
+./add_scripts.sh
 setup_git
+setup_vim
 
