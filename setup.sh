@@ -41,7 +41,7 @@ setup_git () {
 
 setup_vim () {
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-    vim -c "PluginInstall|qa"
+    # vim -c "PluginInstall|qa"
 }
 
 get_docs
