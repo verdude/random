@@ -4,6 +4,10 @@ updir () {
     echo $1 | python -c "import sys;i=sys.stdin.read();i=i.rstrip('/');print i[:0-len(i.split('/')[-1])].rstrip('/')"
 }
 
+curr_lvl () {
+    printf '%s\n' "${PWD##*/}"
+}
+
 remote () {
     if [[ -n $(git remote 2>/dev/null) ]]; then
         git remote get-url --all $(git remote)
@@ -33,7 +37,11 @@ annotate () {
         cd $(fix_dir $1)
         parent_dir=$(repo_parent)
         if [[ -n $rem ]]; then
-            echo "$rem" >> $parent_dir/.repos
+            filename=$parent_dir/.repos
+            if [[ -n $(grep $rem $filename) ]]; then
+                cat $filename | grep -v $rem > $filename
+            fi
+            echo "git clone $rem $(curr_lvl)" >> $filename
         fi
     fi
 }
