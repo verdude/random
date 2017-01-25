@@ -8,6 +8,9 @@ curl -sSL https://efy.byu.edu/efy_session/10087614 | grep "<" > $filename
 
 isFull=$(grep '<p class="center"><a href="#" disabled="disabled" title="Full" class="button btn btn-closed">Full</a></p>' $filename)
 if [[ -z $isFull ]]; then
+    if [[ $(stat -c %s $filename) -eq 0 ]]; then
+        echo FAILED > $filename
+    fi
     ~/bin/send_text -m "11b EFY is not full anymore. $filename"
     ~/bin/send_email -m"https://efy.byu.edu/efy_session/10087614 $filename" -s"11b open" -t"santiago.verdu.01@gmail.com"
 else
