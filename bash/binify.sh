@@ -1,9 +1,11 @@
 #!/bin/bash
 
-if [[ $# -gt 2 ]] || [[ $# -le 0 ]]; then
+if [[ $# -gt 3 ]] || [[ $# -le 0 ]]; then
     echo "Illegal number of parameters"
     exit
 fi
+
+noconfirm=$([[ "$3" = "--yes" ]] || [[ "$2" = "--yes" ]] && echo true)
 
 save() {
     echo "saving file to $fname"
@@ -31,8 +33,13 @@ confirm() {
 localrun() {
     fname=/usr/local/bin/$(python -c "print '$1'.split('/')[-1].split('.')[0]")
     if [ -f $fname ]; then
-        echo "that script already exists..."
-        confirm "Do you want to overwrite the file?" && save $1 $fname
+        if [[ -n $noconfirm ]]; then
+            echo "no confirm set."
+            save $1 $fname
+        else
+            echo "that script already exists..."
+            confirm "Do you want to overwrite the file?" && save $1 $fname
+        fi
         exit
     else
         save $1 $fname
@@ -50,8 +57,13 @@ run() {
 
     fname=~/bin/$(python -c "print '$1'.split('/')[-1].split('.')[0]")
     if [ -f $fname ]; then
-        echo "that script already exists..."
-        confirm "Do you want to overwrite the file?" && save $1 $fname
+        if [[ -n $noconfirm ]]; then
+            echo "no confirm set."
+            save $1 $fname
+        else
+            echo "that script already exists..."
+            confirm "Do you want to overwrite the file?" && save $1 $fname
+        fi
         exit
     else
         save $1 $fname

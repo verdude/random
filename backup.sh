@@ -27,6 +27,10 @@ check_size() {
     find ~/docs -type d -exec du -s {} \; | awk '$1>90000{print $0}'
 }
 
+gitxclude () {
+    find ~/docs/ -name "\.git" -type d -exec annotate_repo {} \;
+}
+
 compress_encrypt() {
     cd ~
     if [[ ! -d docs ]]; then
@@ -34,12 +38,8 @@ compress_encrypt() {
         exit 1
     fi
     echo "compressing docs..."
-    tar cjf docs.bz2 docs
+    tar $(gitxclude) -cjf docs.bz2 docs
     openssl enc -aes-256-cbc -in docs.bz2 -out docs.bz2.enc
-    echo "cleanup..."
-    rm docs.bz2
-    rm -rf ~/docs/dotfiles
-    rm -rf ~/docs/.emacs.d
 }
 
 backup () {
@@ -52,9 +52,19 @@ backup () {
     fi
 }
 
-check_size
-dotfiles
-compress_encrypt
-backup
-echo "Done"
+cleanup () {
+    echo "cleanup..."
+    rm docs.bz2
+    rm -rf ~/docs/dotfiles
+    rm -rf ~/docs/.emacs.d
+}
+
+binify bash/annotate_repo.sh
+gitxclude
+
+# check_size
+# dotfiles
+# compress_encrypt
+# backup
+# echo "Done"
 
