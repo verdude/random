@@ -5,6 +5,7 @@ if [[ ! -d docs ]]; then
     echo "docs folder not found."
     exit 1
 fi
+dryrun=$([[ "$1" = "--dry-run" ]] && echo true)
 
 dotfiles(){
     cd ~
@@ -38,7 +39,9 @@ compress_encrypt() {
         exit 1
     fi
     echo "compressing docs..."
-    tar $(gitxclude) -cjf docs.bz2 docs
+    excludes=$(gitxclude)
+    [[ -n $dryrun ]] && echo $excludes && cleanup && exit 0
+    tar $excludes -cjf docs.bz2 docs
     openssl enc -aes-256-cbc -in docs.bz2 -out docs.bz2.enc
 }
 
@@ -57,13 +60,12 @@ cleanup () {
     rm docs.bz2
     rm -rf ~/docs/dotfiles
     rm -rf ~/docs/.emacs.d
+    echo "Done"
 }
 
-gitxclude
-
-# check_size
-# dotfiles
-# compress_encrypt
-# backup
-# echo "Done"
+check_size
+dotfiles
+compress_encrypt
+backup
+cleanup
 
