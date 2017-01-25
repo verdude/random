@@ -16,7 +16,6 @@ get_dotfiles () {
             mv $f ~
         done
         popd
-        exit
         rm -rf ~/docs/dotfiles
         source ~/.bashrc
     else
