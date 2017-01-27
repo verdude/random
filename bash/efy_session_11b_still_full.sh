@@ -10,7 +10,10 @@ if [[ $(stat -c %s $filename) -eq 0 ]]; then
 fi
 if [[ -z $isFull ]]; then
     ~/bin/send_text -m "11b EFY is not full anymore. $filename"
+    ~/bin/send_text -m "EFY session 11b is not full anymore, or the script broke. -Santi"
     ~/bin/send_email -m"https://efy.byu.edu/efy_session/10087614 $filename" -s"11b open" -t"santiago.verdu.01@gmail.com"
+    ~/bin/send_email -m"https://efy.byu.edu/efy_session/10087614" -s"EFY session 11b has open spots" -t"mudrev@gmail.com"
+else
+    rm $filename
 fi
-rm $filename
 
