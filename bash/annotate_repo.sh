@@ -27,6 +27,10 @@ fix_dir () {
     fi
 }
 
+relpath(){
+    python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ;
+}
+
 annotate () {
     if [[ ! -d $1 ]] | [[ $# -ne 1 ]]; then
         >&2 echo "annotate_repo needs a directory..."
@@ -42,6 +46,7 @@ annotate () {
                 cat $filename | grep -v $rem > $filename
             fi
             echo "git clone $rem $(curr_lvl)" >> $filename
+            echo "--exclude=$(relpath $(pwd) ~ )"
         fi
     fi
 }

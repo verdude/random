@@ -53,6 +53,7 @@ run() {
     path=`echo $PATH | grep "/home/$USER/bin"`
     if [ -z path ]; then
         echo 'export PATH=$PATH:~/bin' >> ~/.bashrc
+        source ~/.bashrc
     fi
 
     fname=~/bin/$(python -c "print '$1'.split('/')[-1].split('.')[0]")

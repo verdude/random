@@ -5,6 +5,43 @@ if [[ ! -d docs ]]; then
     echo "docs folder not found."
     exit 1
 fi
+dryrun=$([[ "$1" = "--dry-run" ]] && echo true)
+
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd () {
+    command popd "$@" > /dev/null
+}
+
+commit_ () {
+    git commit -m "backup"
+    git push $(git remote) $(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+}
+
+repos_commit () {
+    for f in $(find ~/docs -name ".repos"); do
+        pushd $(dirname $f)
+        for d in $(cat .repos | awk '{print $4}'); do
+            if [[ -d $d ]]; then
+                pushd $d
+                git update-index -q --refresh 
+                untracked=$(git ls-files --others)
+                changed=$(git diff-files | awk '{print $6}')
+                if [[ -n $untracked ]]; then
+                    git add .
+                elif [[ -n $changed ]]; then
+                    for filepath in $changed; do
+                        git add $filpath
+                    done
+                fi
+                popd
+            fi
+        done
+        popd
+    done
+}
 
 dotfiles(){
     cd ~
@@ -21,6 +58,7 @@ dotfiles(){
     cd ~
     cp .*rc docs/dotfiles/
     cp .bash_aliases docs/dotfiles/
+    cp .bash_profile docs/dotfiles/
 }
 
 check_size() {
@@ -38,7 +76,10 @@ compress_encrypt() {
         exit 1
     fi
     echo "compressing docs..."
-    tar $(gitxclude) -cjf docs.bz2 docs
+    excludes=$(gitxclude)
+    repos_commit
+    [[ -n $dryrun ]] && echo $excludes && cleanup && exit 0
+    tar $excludes -cjf docs.bz2 docs
     openssl enc -aes-256-cbc -in docs.bz2 -out docs.bz2.enc
 }
 
@@ -54,16 +95,15 @@ backup () {
 
 cleanup () {
     echo "cleanup..."
-    rm docs.bz2
+    [[ -f docs.bz2 ]] && rm docs.bz2
     rm -rf ~/docs/dotfiles
     rm -rf ~/docs/.emacs.d
+    echo "Done"
 }
 
-gitxclude
-
-# check_size
-# dotfiles
-# compress_encrypt
-# backup
-# echo "Done"
+check_size
+dotfiles
+compress_encrypt
+backup
+cleanup
 
