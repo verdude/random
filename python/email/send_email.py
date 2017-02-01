@@ -77,6 +77,7 @@ def parse_options():
     parser.add_argument("-d", "--debug", action="store_true", help="set logging to debug")
     parser.add_argument("-q", "--quiet", action="store_true", help="set logging to quiet")
     parser.add_argument("-c", "--config", action="store", help="The configuration filename")
+    parser.add_argument("-f", "--file-contents", action="store", help="Email the contents of this file as the message")
     return parser.parse_args()
 
 def setup_logging(args):
@@ -109,6 +110,12 @@ def get_user_response(prompt, multi_line=False, password=False):
         logging.debug("chunk: %s" % chunk)
         response += chunk
     return response
+
+def get_message_from_file(filname):
+    msg = ""
+    with open(filename) as f:
+        msg = f.read()
+    return msg
 
 def get_fields(args):
     if args.message is None:

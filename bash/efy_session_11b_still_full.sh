@@ -9,6 +9,7 @@ if [[ $(stat -c %s $filename) -eq 0 ]]; then
     exit 1
 fi
 if [[ -z $isFull ]]; then
+    cat $filename | python -c 'import sys;i=sys.stdin.read();'
     ~/bin/send_text -m "11b EFY is not full anymore. $filename"
     ~/bin/send_email -m"https://efy.byu.edu/efy_session/10087614 $filename" -s"11b open" -t"santiago.verdu.01@gmail.com"
 fi
