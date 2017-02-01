@@ -46,5 +46,5 @@ if [[ -z $got_xclip ]]; then
     echo "Downloading xclip"
     sudo apt-get install xclip
 fi
-xclip -sel clip < ~/.ssh/id_rsa.pub
+cat ~/.ssh/id_rsa.pub | xclip -sel clip
 echo "Now add the key to github. (It's in the paste buffer)"
