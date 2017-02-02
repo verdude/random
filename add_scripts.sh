@@ -17,7 +17,6 @@ $rel""binify bash/swishmac.sh $1
 $rel""binify bash/plan.sh $1
 $rel""binify bash/wiface.sh $1
 $rel""binify bash/git_setup.sh $1
-$rel""binify bash/annotate_repo.sh $1
 $rel""binify bash/backup.sh $1
 
 envify_alias=$(alias | grep envify)

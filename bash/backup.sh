@@ -15,6 +15,33 @@ popd () {
     command popd "$@" > /dev/null
 }
 
+
+annotate_repo () {
+    updir () { echo $1 | python -c "import sys;i=sys.stdin.read();i=i.rstrip('/');print i[:0-len(i.split('/')[-1])].rstrip('/')"; }
+    repo_parent () { updir $(git rev-parse --show-toplevel 2>/dev/null); }
+    fix_dir () { if [[ -n $(pwd | grep "\.git") ]]; then updir $(pwd); else echo $(pwd); fi; }
+    relpath(){ python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
+    remote () { if [[ -n $(git remote 2>/dev/null) ]]; then git remote get-url --all $(git remote); fi; }
+    curr_lvl () { printf '%s\n' "${PWD##*/}"; }
+    if [[ ! -d $1 ]] | [[ $# -ne 1 ]]; then
+        >&2 echo "annotate_repo needs a directory..."
+        exit 1
+    else
+        cd $1
+        rem=$(remote)
+        cd $(fix_dir $1)
+        parent_dir=$(repo_parent)
+        if [[ -n $rem ]]; then
+            filename=$parent_dir/.repos
+            if [[ -n $(grep $rem $filename) ]]; then
+                cat $filename | grep -v $rem > $filename
+            fi
+            echo "git clone $rem $(curr_lvl)" >> $filename
+            echo "--exclude=$(relpath $(pwd) ~ )"
+        fi
+    fi
+}
+
 commit_ () {
     git commit -m "backup"
     git push $(git remote) $(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
@@ -66,7 +93,10 @@ check_size() {
 }
 
 gitxclude () {
-    find ~/docs/ -name "\.git" -type d -exec annotate_repo {} \;
+    # uber hacks; export the function and then exec a subshell
+    # the zero seems to be the {} that is the curr dir find is exec'ing on
+    export -f annotate_repo
+    find ~/docs/ -name "\.git" -type d -exec bash -c 'annotate_repo "$0"' {} \;
 }
 
 compress_encrypt() {

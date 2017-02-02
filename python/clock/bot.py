@@ -45,9 +45,9 @@ class Bot():
         anchors = self.driver.find_elements_by_tag_name("a")
         for el in anchors:
             if el.text.lower() == "in":
-                btn = el
+                inbtn = el
             elif el.text.lower() == "clocked in":
-                btn = el
+                inbtn = el
                 clocked = True
             elif el.text.lower() == "out":
                 outbtn = el
