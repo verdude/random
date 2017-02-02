@@ -43,7 +43,7 @@ def clock(args, account={}):
     bot = Bot(args.show)
     bot.maibyoodeeyou()
     bot.login(netid, password)
-    bot.clock_p(args.clock_out)
+    bot.clock_p(args.clock_in)
     bot.finish()
 
 def getaccounts(args):
