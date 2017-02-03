@@ -3,6 +3,7 @@
 import json
 import argparse
 import logging
+import sys
 import os
 import getpass
 import smtplib
@@ -40,7 +41,17 @@ def send(args, config):
             password=the outgoing email password, string
             to=the target emails, list of strings
     """
-    msg = MIMEText(args.message)
+    contents = ""
+    if args.file_message != None and args.message == None:
+        try:
+            with open(args.file_message) as f:
+                contents = f.read()
+        except:
+            logging.error(bcolors.color("File: [%s] does not exist!" % args.file_message, "FAIL", b=True))
+            sys.exit(1)
+    elif args.message == None:
+        logging.error(bcolors.color("No Message Given!", "FAIL", b=True))
+    msg = MIMEText(args.message or contents)
 
     msg['Subject'] = args.subject
     msg['From'] = config["name"]
@@ -77,7 +88,7 @@ def parse_options():
     parser.add_argument("-d", "--debug", action="store_true", help="set logging to debug")
     parser.add_argument("-q", "--quiet", action="store_true", help="set logging to quiet")
     parser.add_argument("-c", "--config", action="store", help="The configuration filename")
-    parser.add_argument("-f", "--file-contents", action="store", help="Email the contents of this file as the message")
+    parser.add_argument("-f", "--file-message", action="store", help="Email the contents of this file as the message")
     return parser.parse_args()
 
 def setup_logging(args):
@@ -118,7 +129,7 @@ def get_message_from_file(filname):
     return msg
 
 def get_fields(args):
-    if args.message is None:
+    if args.message is None and args.file_message is None:
         args.message = get_user_response("message", True)
     if args.to is None:
         args.to = get_user_response("to")
