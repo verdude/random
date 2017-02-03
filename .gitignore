@@ -4,3 +4,4 @@
 \.*rc
 *.swp
 **.ropeproject
+.#*
