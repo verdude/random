@@ -26,13 +26,16 @@ conffile = os.path.expanduser("~/.clockrc")
 
 class Bot():
     def __init__(self, show):
-        self.chromeDriverLocation = "./chromedriver"
+        self.chromeDriverLocation = ["./chromedriver","/usr/bin/chromedriver"]
         self.show = show
         if not self.show:
             self.display = Display(visible=0, size=(800, 600))
             self.display.start()
         else: self.display = None
-        self.driver = webdriver.Chrome(self.chromeDriverLocation)
+        for x in self.chromeDriverLocation:
+            if os.path.isfile(x):
+                self.driver = webdriver.Chrome(x)
+                break
 
     def finish(self):
         """ Cleanup the driver and display """
