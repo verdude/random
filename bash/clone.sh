@@ -8,5 +8,5 @@ clone () {
 }
 
 export -f clone
-find . -type f -name '.repos' -exec bash -c 'clone "$0"' {} \; 2>/dev/null
+find ~ -type f -name '.repos' -exec bash -c 'clone "$0"' {} \; 2>/dev/null
 
