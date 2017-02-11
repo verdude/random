@@ -42,21 +42,25 @@ dependencies() {
     if [[ -z ajs ]]; then
         get_dep Ayamel.js
     else
+        echo "$ajs"
         update_dep Ayamel.js
     fi
     if [[ -z ews ]]; then
         get_dep EditorWidgets
     else
+        echo "$ews"
         update_dep EditorWidgets
     fi
     if [[ -z tmt ]]; then
         get_dep TimedText
     else
+        echo "$tmt"
         update_dep TimedText
     fi
     if [[ -z tle ]]; then
         get_dep subtitle-timeline-editor
     else
+        echo "$tle"
         update_dep subtitle-timeline-editor
     fi
     popd
