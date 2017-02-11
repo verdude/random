@@ -8,16 +8,17 @@ popd() {
 }
 
 get_dep() {
+    pwd
     # args: $1=repository name, $2=directory name
-    git clone git@github.com:byu-odh/$1 $2
-    pushd $2
+    git clone git@github.com:byu-odh/$1
+    pushd $1
     git checkout develop
     popd
 }
 
 update_dep() {
-    # $1=directory name
     pwd
+    # $1=directory name
     pushd $1
     git checkout develop
     git pull
@@ -26,7 +27,6 @@ update_dep() {
 
 dependencies() {
     pushd /var/www/html
-    pwd
     if [[ $(stat -c %U /var/www/html) != $USER ]]; then
         echo "chowning server root to $USER:$USER"
         sudo chown -R $USER:$USER .
@@ -38,25 +38,24 @@ dependencies() {
     tle=$(echo $deps | grep timelineeditor)
 
     if [[ -z ajs ]]; then
-        get_dep ayamel.js ayameljs
+        get_dep Ayamel.js
     else
-        pwd
-        update_dep ayameljs
+        update_dep Ayamel.js
     fi
     if [[ -z ews ]]; then
-        get_dep editorwidgets editorwidgets
+        get_dep EditorWidgets
     else
-        update_dep editorwidgets
+        update_dep EditorWidgets
     fi
     if [[ -z tmt ]]; then
-        get_dep timedtext timedtext
+        get_dep TimedText
     else
-        update_dep timedtext
+        update_dep TimedText
     fi
     if [[ -z tle ]]; then
-        get_dep subtitle-timeline-editor timelineeditor
+        get_dep subtitle-timeline-editor
     else
-        update_dep timelineeditor
+        update_dep subtitle-timeline-editor
     fi
     popd
 }
