@@ -65,6 +65,11 @@ if [[ ! -d /var/www/html ]]; then
     exit
 fi
 
+if [[ $1 == "help" ]]; then
+    echo "not documented"
+    exit
+fi
+
 if [[ $1 == "update" ]]; then
     dependencies
 fi
@@ -72,8 +77,6 @@ fi
 if [ -d ~/activator ]; then
     ~/activator/bin/activator $@
 else
-    echo "not gonna download...exiting"
-    exit
     cd ~
     wget https://downloads.typesafe.com/typesafe-activator/1.3.12/typesafe-activator-1.3.12.zip
     unzip typesafe-activator-1.3.12.zip
