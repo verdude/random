@@ -34,10 +34,10 @@ dependencies() {
         sudo chown -R $USER:$USER .
     fi
     deps=$(ls -F /var/www/html | grep "/")
-    ajs=$(echo $deps | grep ayameljs)
-    ews=$(echo $deps | grep editorwidgets)
-    tmt=$(echo $deps | grep timedtext)
-    tle=$(echo $deps | grep timelineeditor)
+    ajs=$(echo $deps | grep Ayamel.js)
+    ews=$(echo $deps | grep EditorWidgets)
+    tmt=$(echo $deps | grep TimedText)
+    tle=$(echo $deps | grep subtitle-timeline-editor)
 
     if [[ -z ajs ]]; then
         get_dep Ayamel.js
