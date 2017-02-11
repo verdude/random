@@ -9,6 +9,7 @@ popd() {
 
 get_dep() {
     pwd
+    echo "get $@"
     # args: $1=repository name, $2=directory name
     git clone git@github.com:byu-odh/$1
     pushd $1
@@ -18,6 +19,7 @@ get_dep() {
 
 update_dep() {
     pwd
+    echo "updoot $@"
     # $1=directory name
     pushd $1
     git checkout develop
