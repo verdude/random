@@ -40,6 +40,8 @@ confirm() {
 git config --global user.name "Santiago Verdu"
 git config --global user.email "santiago.verdu.01@gmail.com"
 git config --global alias.slog "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+git config --global push.default simple
+run '~/.tmux/plugins/tpm/tpm'
 confirm "Generate Keys?" && generate
 got_xclip=`which xclip`
 if [[ -z $got_xclip ]]; then
