@@ -1,14 +1,10 @@
 #!/bin/bash
 
-sudo apt-get install -y --no-install-recommends \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    software-properties-common >/dev/null 2>&1
+sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl software-properties-common >/dev/null 2>&1
 
 curl -silent -fsSL https://apt.dockerproject.org/gpg | sudo apt-key add - >/dev/null 2>&1
 
-has=$(apt-key fingerprint 58118E89F3A912897C070ADBF76221572C52609D >/dev/null 2>&1)
+has=$(apt-key fingerprint 58118E89F3A912897C070ADBF76221572C52609D)
 
 if [[ -z $has ]]; then
     echo "Error adding key. exiting"
