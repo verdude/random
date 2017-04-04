@@ -57,11 +57,27 @@ repos_commit () {
                 untracked=$(git ls-files --others)
                 changed=$(git diff-files | awk '{print $6}')
                 if [[ -n $untracked ]]; then
-                    git add .
-                elif [[ -n $changed ]]; then
-                    for filepath in $changed; do
-                        git add $filpath
-                    done
+                    if [[ -n $dryrun ]]; then
+                        echo "would git add untracked files in $(pwd)::$untracked"
+                    else
+                        git add .
+                    fi
+                fi
+                if [[ -n $changed ]]; then
+                    if [[ -n $dryrun ]]; then
+                        echo "would git add changed files in $(pwd)::$changed"
+                    else
+                        for filepath in $changed; do
+                            git add $filepath
+                        done
+                    fi
+                fi
+                if [[ -n $untracked ]] || [[ -n $changed ]]; then
+                    if [[ -n $dryrun ]]; then
+                        echo "would commit $d"
+                    else
+                        commit_
+                    fi
                 fi
                 popd
             fi
@@ -79,7 +95,6 @@ dotfiles(){
     if [[ -d .emacs.d ]]; then
         echo "Backing up emacs conf..."
         cp -r .emacs.d docs
-        echo "Done"
     fi
 
     cd ~
@@ -117,7 +132,7 @@ backup () {
     cd ~
     if [[ -f docs.bz2.enc ]]; then
         echo "Backing up to spooq.website..."
-        scp docs.bz2.enc snt@spooq.website:~/bkup/docs.bz2.enc
+        scp docs.bz2.enc jelly@spooq.website:~/docs.bz2.enc
     else
         echo "encrypted file not found."
     fi
