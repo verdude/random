@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/github/random
+cd ~/docs/github/random
 chmod 775 bash/binify.sh
 home_bin=$(echo $PATH | grep ~/bin)
 if [[ -z $home_bin ]]; then
