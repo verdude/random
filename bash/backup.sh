@@ -101,6 +101,7 @@ dotfiles(){
     cp .*rc docs/dotfiles/
     cp .bash_aliases docs/dotfiles/
     cp .bash_profile docs/dotfiles/
+    cp .tmux.conf docs/dotfiles
 }
 
 check_size() {
