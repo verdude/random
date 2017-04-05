@@ -41,7 +41,12 @@ setup_git () {
 
 setup_vim () {
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    git clone https://github.com/powerline/fonts; cd fonts; ./install.sh; cd ../; rm -rf fonts
     # vim -c "PluginInstall|qa"
+}
+
+setup_tmux() {
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
 get_docs
@@ -49,4 +54,5 @@ get_dotfiles
 ./add_scripts.sh
 setup_git
 setup_vim
+setup_tmux
 
