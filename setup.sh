@@ -49,6 +49,12 @@ setup_tmux() {
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
+del_folders () {
+    for x in $(ls ~ | grep "^[A-Z]"); do
+        rm -rf ~/$x
+    done
+}
+
 get_docs
 get_dotfiles
 ./add_scripts.sh
