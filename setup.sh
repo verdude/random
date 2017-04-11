@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rmd=$([[ "$1" = "-rmd" ]] && echo true)
+
 get_docs () {
     scp jelly@spooq.website:~/docs.bz2.enc ~
     openssl enc -d -aes-256-cbc -in ~/docs.bz2.enc -out ~/docs.bz2
@@ -55,6 +57,7 @@ del_folders () {
     done
 }
 
+del_folders
 get_docs
 get_dotfiles
 ./add_scripts.sh
