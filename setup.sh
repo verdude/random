@@ -1,7 +1,9 @@
 #!/bin/bash
 
+rmd=$([[ "$1" = "-rmd" ]] && echo true)
+
 get_docs () {
-    scp snt@spooq.website:~/bkup/docs.bz2.enc ~
+    scp jelly@spooq.website:~/docs.bz2.enc ~
     openssl enc -d -aes-256-cbc -in ~/docs.bz2.enc -out ~/docs.bz2
     echo "extracting..."
     tar xjf ~/docs.bz2 -C ~/
@@ -41,12 +43,25 @@ setup_git () {
 
 setup_vim () {
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    git clone https://github.com/powerline/fonts; cd fonts; ./install.sh; cd ../; rm -rf fonts
     # vim -c "PluginInstall|qa"
 }
 
+setup_tmux() {
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+}
+
+del_folders () {
+    for x in $(ls ~ | grep "^[A-Z]"); do
+        rm -rf ~/$x
+    done
+}
+
+del_folders
 get_docs
 get_dotfiles
 ./add_scripts.sh
 setup_git
 setup_vim
+setup_tmux
 
