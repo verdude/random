@@ -18,8 +18,9 @@ class Texter():
         self.tc = TwilioRestClient(str(self.config["account_sid"]),str(self.config["auth_token"]))
 
     def send(self):
+        logging.info("seding message to: %s", str(self.config))
         logging.info("Sending message: %s", self.message)
-        self.tc.messages.create(body=self.message, to=str(self.config["to"]), from_=str(self.config["number"]))
+        self.tc.messages.create(body=self.message, to=str(self.config["default"]), from_=str(self.config["number"]))
 
 def parse_options():
     parser = argparse.ArgumentParser(prog="updates", description="Send Text", add_help=True)
