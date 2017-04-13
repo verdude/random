@@ -23,6 +23,13 @@ get_dotfiles () {
     else
         echo "~/docs/dotfiles not found"
     fi
+    if [[ -d ~/docs/.i3 ]]; then
+        echo "copying i3 conf"
+        cp -r ~/docs/.i3 ~
+        rm -rf ~/docs/.i3
+    else
+        echo "~/docs/.i3 not found"
+    fi
     if [[ -d ~/docs/.emacs.d ]]; then
         echo "copying emacs conf"
         cp -r ~/docs/.emacs.d ~

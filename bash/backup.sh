@@ -96,6 +96,10 @@ dotfiles(){
         echo "Backing up emacs conf..."
         cp -r .emacs.d docs
     fi
+    if [[ -d .i3 ]]; then
+        echo "Backing up i3 conf..."
+        cp -r .i3 docs
+    fi
 
     cd ~
     cp .*rc docs/dotfiles/
