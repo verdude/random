@@ -18,6 +18,7 @@ $rel""binify bash/plan.sh $1
 $rel""binify bash/wiface.sh $1
 $rel""binify bash/git_setup.sh $1
 $rel""binify bash/backup.sh $1
+$rel""binify bash/delswaps.sh $1
 
 envify_alias=$(alias | grep envify)
 if [[ -z envify_alias ]]; then
