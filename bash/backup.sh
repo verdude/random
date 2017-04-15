@@ -98,7 +98,11 @@ dotfiles(){
     fi
     if [[ -d .i3 ]]; then
         echo "Backing up i3 conf..."
-        cp -r .i3 docs
+        cp -r .i3 docs/dotfiles
+    fi
+    if [[ -d .fonts ]]; then
+        echo "Backing up the fonts dir"
+        cp -r .fonts docs/dotfiles
     fi
 
     cd ~
