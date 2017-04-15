@@ -45,7 +45,7 @@ annotate () {
             if [[ -n $(grep $rem $filename) ]]; then
                 cat $filename | grep -v $rem > $filename
             fi
-            echo "git clone $rem $(curr_lvl)" >> $filename
+            echo "git submodule add $rem $(curr_lvl)" >> $filename
             echo "--exclude=$(relpath $(pwd) ~ )"
         fi
     fi
