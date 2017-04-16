@@ -4,42 +4,6 @@ set -e
 
 rmd=$([[ "$1" = "-rmd" ]] && echo true)
 
-get_docs () {
-    scp jelly@spooq.website:~/docs.bz2.enc ~
-    openssl enc -d -aes-256-cbc -in ~/docs.bz2.enc -out ~/docs.bz2
-    echo "extracting..."
-    tar xjf ~/docs.bz2 -C ~/
-    rm ~/docs.bz2*
-}
-
-get_dotfiles () {
-    if [[ -d ~/docs/dotfiles ]]; then
-        echo "copying dotfiles"
-        pushd ~/docs/dotfiles
-        for f in $(ls -pa | grep -v /); do
-            mv $f ~
-        done
-        popd
-        rm -rf ~/docs/dotfiles
-        source ~/.bashrc
-    else
-        echo "~/docs/dotfiles not found"
-    fi
-    if [[ -d ~/docs/.i3 ]]; then
-        echo "copying i3 conf"
-        cp -r ~/docs/.i3 ~
-        rm -rf ~/docs/.i3
-    else
-        echo "~/docs/.i3 not found"
-    fi
-    if [[ -d ~/docs/.emacs.d ]]; then
-        echo "copying emacs conf"
-        cp -r ~/docs/.emacs.d ~
-        rm -rf ~/docs/.emacs.d
-    else
-        echo "~/docs/.emacs.d not found"
-    fi
-}
 
 setup_git () {
     got_git=$(which git)
@@ -47,7 +11,7 @@ setup_git () {
         sudo apt install git
     fi
     chmod 775 bash/git_setup.sh
-    bash/git_setup.sh
+    git_setup
 }
 
 setup_vim () {
@@ -67,8 +31,6 @@ del_folders () {
 }
 
 del_folders
-get_docs
-get_dotfiles
 ./add_scripts.sh
 setup_git
 setup_vim
