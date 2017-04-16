@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 rmd=$([[ "$1" = "-rmd" ]] && echo true)
 
 get_docs () {

@@ -1,11 +1,7 @@
 #!/bin/bash
 
-cd ~/docs/github/random
-chmod 775 bash/binify.sh
-home_bin=$(echo $PATH | grep ~/bin)
-if [[ -z $home_bin ]]; then
-    echo 'export PATH=$PATH:~/bin' >> ~/.bashrc;
-fi
+cd $GITDIR/random
+chmod 775 binify.sh
 rel=$(echo ~/bin/)
 bash/binify.sh bash/binify.sh $1
 $rel""binify python/twilio/send_text.py $1
