@@ -51,5 +51,7 @@ annotate () {
     fi
 }
 
-annotate $1
+for x in $(ls $GITDIR); do
+    annotate $x
+done
 
