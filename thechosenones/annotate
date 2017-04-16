@@ -19,11 +19,12 @@ repo_parent () {
 }
 
 fix_dir () {
-    # if we are in a .git directory
+    # prints working directory up one folder if we are in a .git folder
+    # prints the working directory otherwise
     if [[ -n $(pwd | grep "\.git") ]]; then
         updir $(pwd) 
     else
-        echo $(pwd)
+        pwd
     fi
 }
 
@@ -36,17 +37,24 @@ annotate () {
         >&2 echo "annotate_repo needs a directory..."
         exit 1
     else
-        cd $1
+        cd "$GITDIR/$1"
         rem=$(remote)
+        # cd out of the .git directory
         cd $(fix_dir $1)
-        parent_dir=$(repo_parent)
         if [[ -n $rem ]]; then
-            filename=$parent_dir/.repos
-            if [[ -n $(grep $rem $filename) ]]; then
-                cat $filename | grep -v $rem > $filename
+            # The file where we safe the list of repositories
+            filepath="$GITDIR"/dotfiles/
+            filename=.repos.txt
+            repos="$filepath$filename"
+            # create the file if it doesn't exist (and the dir it's in)
+            [[ ! -f "$repos" ]] && mkdir -p "$filepath" && touch "$repos" && ln -s $(readlink -e $repos) ~
+            if [[ -n $(grep $rem $repos) ]]; then
+                # Take the repo out of the file if it already is in there.
+                # because of name changes and stuff it might
+                # be better to replace the previous remote url with the current one
+                cat $repos | grep -v $rem > $repos
             fi
-            echo "git clone $rem $(curr_lvl)" >> $filename
-            echo "--exclude=$(relpath $(pwd) ~ )"
+            echo "git clone $rem $(curr_lvl)" >> $repos
         fi
     fi
 }
