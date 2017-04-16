@@ -4,7 +4,6 @@ set -e
 
 rmd=$([[ "$1" = "-rmd" ]] && echo true)
 
-
 setup_git () {
     got_git=$(which git)
     if [[ -z $got_git ]]; then

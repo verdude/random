@@ -7,7 +7,7 @@ if [ -z $got_git ]; then
 fi
 
 generate() {
-    # generates keys for github
+    # generates ssh keys
     echo "Make sure to name the key pair 'id_rsa'"
     ssh-keygen -t rsa -b 4096 -C "santiago.verdu.01@gmail.com"
     ssh_agent=`eval "$(ssh-agent -s)"`
@@ -17,6 +17,13 @@ generate() {
     else
         echo "ssh_agent not found"
     fi
+    got_xclip=`which xclip`
+    if [[ -z $got_xclip ]]; then
+        echo "Downloading xclip"
+        sudo apt-get install xclip
+    fi
+    cat ~/.ssh/id_rsa.pub | xclip -sel clip
+    echo "Now add the key to github. (It's in the paste buffer)"
 }
 
 # prompts the user whether or not they wish to execute some following command.
@@ -43,10 +50,3 @@ git config --global alias.slog "log --color --graph --pretty=format:'%Cred%h%Cre
 git config --global push.default simple
 
 confirm "Generate Keys?" && generate
-got_xclip=`which xclip`
-if [[ -z $got_xclip ]]; then
-    echo "Downloading xclip"
-    sudo apt-get install xclip
-fi
-cat ~/.ssh/id_rsa.pub | xclip -sel clip
-echo "Now add the key to github. (It's in the paste buffer)"
