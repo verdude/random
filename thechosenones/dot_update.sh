@@ -1,14 +1,14 @@
 #!/bin/bash
 
 commit () {
-    pushd "$GITDIR"/dots
+    pushd "$DOTDIR"
     git add .
     git commit -am "dot_update"
     git push
     popd
 }
 
-if [[ -d "$GITDIR"/dots ]]; then
+if [[ -d "$DOTDIR" ]]; then
     commit
 else
     echo "dots folder not found."

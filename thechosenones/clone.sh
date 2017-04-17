@@ -1,8 +1,8 @@
 #!/bin/bash
 
-folder=$GITDIR/dots/
+folder="$DOTDIR"
 filename=.repos.txt
-repofile="$folder$filename"
+repofile="$folder/$filename"
 if [[ -f "$repofile" ]]; then
     pushd "$GITDIR"
     cat "$repofile" | bash

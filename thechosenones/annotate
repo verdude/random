@@ -43,7 +43,7 @@ annotate () {
         cd $(fix_dir $1)
         if [[ -n $rem ]]; then
             # The file where we safe the list of repositories
-            filepath="$GITDIR"/dotfiles/
+            filepath="$DOTDIR/"
             filename=.repos.txt
             repos="$filepath$filename"
             # create the file if it doesn't exist (and the dir it's in)
