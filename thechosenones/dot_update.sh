@@ -1,17 +1,26 @@
 #!/bin/bash
 
 commit () {
-    pushd "$DOTDIR"
     git add .
     git commit -am "dot_update"
+}
+
+pull () {
+    git pull
+}
+
+push () {
     git push
-    popd
 }
 
 if [[ -d "$DOTDIR" ]]; then
+    pushd "$DOTDIR"
     commit
+    pull
+    push
+    popd
 else
     echo "dots folder not found."
-    echo "Is this your git directory: ${GITDIR}?"
+    echo "Is this your dotfile directory: ${DOTDIR}?"
 fi
 
