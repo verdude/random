@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folder=$GITDIR/dotfiles/
+folder=$GITDIR/dots/
 filename=.repos.txt
 repofile="$folder$filename"
 if [[ -f "$repofile" ]]; then
