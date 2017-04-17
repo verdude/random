@@ -37,29 +37,36 @@ annotate () {
         >&2 echo "annotate_repo needs a directory..."
         exit 1
     else
+        echo "first arg...:$1"
+        echo
         cd "$GITDIR/$1"
         rem=$(remote)
         # cd out of the .git directory
         cd $(fix_dir $1)
         if [[ -n $rem ]]; then
-            # The file where we safe the list of repositories
+            # The file where we save the list of repositories
             filepath="$DOTDIR/"
             filename=.repos.txt
             repos="$filepath$filename"
             # create the file if it doesn't exist (and the dir it's in)
-            [[ ! -f "$repos" ]] && mkdir -p "$filepath" && touch "$repos" && ln -s $(readlink -e $repos) ~
+            [[ ! -f "$repos" ]] && echo "making folder and links in $repos" && mkdir -p "$filepath" && touch "$repos" && ln -sf $(readlink -e $repos) ~
             if [[ -n $(grep $rem $repos) ]]; then
                 # Take the repo out of the file if it already is in there.
                 # because of name changes and stuff it might
                 # be better to replace the previous remote url with the current one
+                echo "REMOVING: $rem"
+                echo
                 cat $repos | grep -v $rem > $repos
             fi
+            echo "ADDING: $rem"
+            echo
             echo "git clone $rem $(curr_lvl)" >> $repos
         fi
     fi
 }
 
 for x in $(ls $GITDIR); do
+    echo $x
     annotate $x
 done
 
