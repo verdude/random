@@ -16,6 +16,7 @@ push () {
 if [[ -d "$DOTDIR" ]]; then
     pushd "$DOTDIR"
     commit
+    git fetch origin master
     pull
     push
     popd
