@@ -71,6 +71,7 @@ if [[ $1 == "help" ]]; then
     echo "COMMANDS:"
     echo "    run                        Runs the project in development mode."
     echo "    compile                    Compiles the project."
+    echo "    help                       Shows this message."
     echo "    help [play/sbt command]    Information about how to run a specific play/sbt command."
     echo "    update                     Updates all of the dependencies in /var/www/html."
     echo
@@ -85,7 +86,7 @@ if [[ $1 == "update" ]]; then
     exit
 fi
 
-if [ -z $(which sbt) ]; then
+if [ -n $(which sbt) ]; then
     sbt "$@"
 else
     echo "check this out: scala-sbt.org/download.html"
