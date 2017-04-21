@@ -81,6 +81,7 @@ fi
 
 if [[ $1 == "update" ]]; then
     dependencies
+    echo "All systems are go."
     exit
 fi
 
