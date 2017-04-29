@@ -26,20 +26,17 @@ generate() {
     echo "Now add the key to github. (It's in the paste buffer)"
 }
 
-# prompts the user whether or not they wish to execute some following command.
 confirm() {
-    # call with a prompt string or use a default
-    read -r -p "${1:-Are you sure? [y/N]} " response
+    read -r -p "$1" response
     case $response in
         [yY][eE][sS]|[yY])
-            true
+            return 0
             ;;
         [Nn][Oo]|[Nn])
-            false
+            return 1
             ;;
         *)
-            false
-            #need to create a way to loop back to the read statement.
+            return 1
             ;;
     esac
 }
@@ -49,4 +46,7 @@ git config --global user.email "santiago.verdu.01@gmail.com"
 git config --global alias.slog "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 git config --global push.default simple
 
-confirm "Generate Keys?" && generate
+if confirm "Generate keys? [y/N]"; then
+    generate
+fi
+
