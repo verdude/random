@@ -66,21 +66,30 @@ if [[ ! -d /var/www/html ]]; then
 fi
 
 if [[ $1 == "help" ]]; then
-    echo "not documented"
+    echo "USAGE:"
+    echo "    $0 [command] # to run different play commands on the project"
+    echo "COMMANDS:"
+    echo "    run                        Runs the project in development mode."
+    echo "    compile                    Compiles the project."
+    echo "    help                       Shows this message."
+    echo "    help [play/sbt command]    Information about how to run a specific play/sbt command."
+    echo "    update                     Updates all of the dependencies in /var/www/html."
+    echo
+    echo "NOTE: Only works on Debian based systems, atm."
+    echo "NOTE: Just typing $0 will launch the play/sbt console for the project in the current directory."
     exit
 fi
 
 if [[ $1 == "update" ]]; then
     dependencies
+    echo "All systems are go."
+    exit
 fi
 
-if [ -d ~/activator ]; then
-    ~/activator/bin/activator $@
+if [ -n $(which sbt) ]; then
+    sbt "$@"
 else
-    cd ~
-    wget https://downloads.typesafe.com/typesafe-activator/1.3.12/typesafe-activator-1.3.12.zip
-    unzip typesafe-activator-1.3.12.zip
-    mv "activator-dist-1.3.12" activator
-    ~/activator/bin/activator $@
+    echo "check this out: scala-sbt.org/download.html"
+    echo "try: $0 help"
 fi
 
