@@ -2,6 +2,9 @@
 
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
+reponame="random"
+directory=$(dirname $0)
+filename=${0##*/}
 
 pushd () {
     command pushd $@ &> /dev/null
@@ -75,29 +78,38 @@ setup_dotfiles () {
     popd
 }
 
-check_for_random_repo () {
-    # perhaps use find?
+check_for_repo () {
     # perhaps search for  $scripts_dirname
-    if [[ -d random ]]; then
-        cd random
+    # returns 0=true 1=false
+    if [[ -d "$reponame" ]]; then
+        cd "$reponame"
+        return 0
     else
-        echo "Rudimentary search for repo with $scripts_dirname failed. Perhaps we need a less rudimentary seach."
-        exit
+        echo "Rudimentary search for $reponame failed. Perhaps we need a less rudimentary seach."
+        return 1
     fi
 }
 
 check_git () {
     git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-
-    if [[ -z $git_root ]]; then
+    if [[ "$reponame" = ${git_root##*/} ]]; then 
+        cd "$git_root"
+    else
         echo "Why are we in $PWD?"
-        if [[ -z $GITDIR ]]; then
+        if [[ -z "$GITDIR" ]]; then
             echo '$GITDIR not found.'
-            echo "Checking for 'random' repository..."
-            check_for_random_repo
+            echo "Checking for '$reponame' repository..."
+            if ! check_for_repo; then
+                exit
+            fi
         else
-            cd $GITDIR
-            check_for_random_repo
+            pushd "$GITDIR"
+            if ! check_for_repo; then
+                popd
+                if ! check_for_repo; then
+                    exit
+                fi
+            fi
         fi
     fi
 }
@@ -106,6 +118,11 @@ add_scripts () {
     if [[ ! -f "add_scripts.sh" ]]; then
         check_git
     fi
+    ./add_scripts
+}
+
+cleanup () {
+    exit
 }
 
 opts "$@"
@@ -116,5 +133,6 @@ setup_folders
 setup_vim
 setup_tmux
 setup_dotfiles
+cleanup
 echo "done"
 
