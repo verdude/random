@@ -2,9 +2,12 @@
 
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
+directory=$(basename $(dirname $0))
+echo "$directory"
+exit
 reponame="random"
-directory=$(dirname $0)
-filename=${0##*/}
+bitbucket=$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep "Permission denied (publickey).")
+github=$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep "Permission denied (publickey).")
 
 pushd () {
     command pushd $@ &> /dev/null
@@ -55,8 +58,6 @@ setup_dotfiles () {
     mkdir -p "$default_gitdir"
     pushd "$default_gitdir"
 
-    bitbucket=$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep "Permission denied (publickey).")
-    github=$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep "Permission denied (publickey).")
     if [[ -n "$bitbucket" ]]; then
         echo "Add your ssh keys to bitbucket and github first and then rerun this script with '--dots'"
     else
@@ -72,67 +73,45 @@ setup_dotfiles () {
             cat ~/.ssh/id_rsa.pub | xclip -sel clip
             echo "add key to github (it's in the paste buffer)"
         else
+            if [[ ! -d ~/bin ]]; then
+                echo "You should run the rest of the setup now"
+                exit
+            fi
             ~/bin/reclone
         fi
     fi
     popd
 }
 
-check_for_repo () {
-    # perhaps search for  $scripts_dirname
-    # returns 0=true 1=false
-    if [[ -d "$reponame" ]]; then
-        cd "$reponame"
-        return 0
-    else
-        echo "Rudimentary search for $reponame failed. Perhaps we need a less rudimentary seach."
-        return 1
-    fi
-}
-
-check_git () {
-    git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-    if [[ "$reponame" = ${git_root##*/} ]]; then 
-        cd "$git_root"
-    else
-        echo "Why are we in $PWD?"
-        if [[ -z "$GITDIR" ]]; then
-            echo '$GITDIR not found.'
-            echo "Checking for '$reponame' repository..."
-            if ! check_for_repo; then
-                exit
-            fi
-        else
-            pushd "$GITDIR"
-            if ! check_for_repo; then
-                popd
-                if ! check_for_repo; then
-                    exit
-                fi
-            fi
-        fi
-    fi
-}
-
 add_scripts () {
-    if [[ ! -f "add_scripts.sh" ]]; then
-        check_git
-    fi
-    ./add_scripts
+    ./add_scripts.sh
 }
 
-cleanup () {
-    exit
+setup () {
+    mkdir -p "$default_gitdir"
+    wd="$PWD"
+    pushd "$default_gitdir"
+    if [[ ! -d "$reponame" ]]; then
+        if [[ -z "$github" ]]; then
+            url="git@github.com:verdude/$reponame"
+        else
+            url="https://github.com/verdude/$reponame"
+        fi
+        git clone "$url"
+    fi
+    cd "$reponame"
+    nwd="$PWD"
+    if [[ "$wd" != "$nwd" ]]
 }
 
 opts "$@"
 [[ -n "$dots_only" ]] && setup_dotfiles && exit
+setup
 add_scripts
 setup_git
 setup_folders
 setup_vim
 setup_tmux
 setup_dotfiles
-cleanup
 echo "done"
 
