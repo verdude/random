@@ -13,14 +13,19 @@ error_exit () {
     exit
 }
 
-folder="$DOTDIR"
 if [[ -z "$folder" ]] && [[ -f "$HOME/.bashrc" ]]; then
-    echo "sourcing"
-    source "$HOME/.bashrc"
-    folder="$DOTDIR"
+    # grab the env var from the bashrc file without exporting it
+    dir_=$(cat "$HOME/.bashrc" | grep "GITDIR\=")
+    # split at the equals, take the latter half
+    GITDIR=$(eval echo "${dir_##*=}")
+    # same for the dotdir env var
+    dir_=$(cat "$HOME/.bashrc" | grep "DOTDIR\=")
+    DOTDIR=$(eval echo "${dir_##*=}")
 else
     error_exit
 fi
+
+folder="$DOTDIR"
 filename=.repos.txt
 repofile="$folder/$filename"
 if [[ -f "$repofile" ]]; then
