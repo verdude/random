@@ -105,13 +105,13 @@ setup () {
     mkdir -p "$default_gitdir"
     wd="$PWD"
     pushd "$default_gitdir"
-    echo "$PWD"
     if [[ ! -d "$reponame" ]]; then
         if [[ -z "$github" ]]; then
             url="git@github.com:verdude/$reponame"
         else
             url="https://github.com/verdude/$reponame"
         fi
+        echo "cloning into $PWD"
         git clone "$url"
     fi
     cd "$reponame"
