@@ -105,6 +105,7 @@ setup () {
     mkdir -p "$default_gitdir"
     wd="$PWD"
     pushd "$default_gitdir"
+    echo "$PWD"
     if [[ ! -d "$reponame" ]]; then
         if [[ -z "$github" ]]; then
             url="git@github.com:verdude/$reponame"
@@ -114,11 +115,15 @@ setup () {
         git clone "$url"
     fi
     cd "$reponame"
+    echo "$PWD"
     nwd="$PWD"
     # delete the random repo if it isn't in the $default_gitdir
     if [[ "$wd" != "$nwd" ]]; then
+    echo "$PWD"
         popd
+    echo "$PWD"
         cd ..
+    echo "$PWD"
         echo "deleting $nwd"
         rm -rf "$nwd"
     fi
