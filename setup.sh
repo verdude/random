@@ -97,6 +97,7 @@ setup_dotfiles () {
 }
 
 add_scripts () {
+    echo $PWD
     ./add_scripts.sh
 }
 
@@ -124,8 +125,8 @@ setup () {
     fi
 }
 
-if [[ "$UID" -ne $(stat -tc %u "$default_gitdir") ]]; then
-    if ! confirm "Do you want to use $default_gitdir as your Git Directory?"; then
+if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
+    if ! confirm "Do you want to use $default_gitdir as your Git Directory? [y/N]: "; then
         default_gitdir=~/git
     fi
 fi
