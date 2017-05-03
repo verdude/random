@@ -8,7 +8,17 @@ popd () {
     command popd "$@" &> /dev/null
 }
 
+error_exit () {
+    echo "repo file not found."
+    exit
+}
+
 folder="$DOTDIR"
+if [[ -z "$folder" ]] && [[ -f "$HOME/.bashrc" ]]; then
+    source "$HOME/.bashrc"
+else
+    error_exit
+fi
 filename=.repos.txt
 repofile="$folder/$filename"
 if [[ -f "$repofile" ]]; then
@@ -30,7 +40,6 @@ if [[ -f "$repofile" ]]; then
     done < "$repofile"
     popd
 else
-    echo "repo file not found"
 fi
 
 
