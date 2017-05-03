@@ -116,7 +116,7 @@ setup () {
     cd "$reponame"
     # delete the random repo if it isn't in the $default_gitdir
     if [[ "$scriptpath" != "$PWD" ]]; then
-        echo "deleting $PWD"
+        echo "deleting $scriptpath"
         rm -rf "$scriptpath"
     fi
     # TODO: check if this is the same repo that we cloned
