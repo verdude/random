@@ -84,6 +84,7 @@ setup_dotfiles () {
         fi
         ./link.sh
         source .bashrc
+        echo "SOURCED. dis is the gitdir $GITDIR"
         if [[ -n "$github" ]]; then
             cat ~/.ssh/id_rsa.pub | xclip -sel clip
             echo "add key to github (it's in the paste buffer)"
