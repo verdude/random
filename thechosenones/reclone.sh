@@ -15,7 +15,8 @@ error_exit () {
 
 folder="$DOTDIR"
 if [[ -z "$folder" ]] && [[ -f "$HOME/.bashrc" ]]; then
-        source "$HOME/.bashrc"
+    echo "sourcing"
+    source "$HOME/.bashrc"
 else
     error_exit
 fi
