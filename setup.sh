@@ -120,8 +120,6 @@ setup () {
     # delete the random repo if it isn't in the $default_gitdir
     if [[ "$wd" != "$nwd" ]]; then
     echo "$PWD"
-        popd
-    echo "$PWD"
         cd ..
     echo "$PWD"
         echo "deleting $nwd"
