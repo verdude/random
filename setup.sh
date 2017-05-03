@@ -7,6 +7,21 @@ reponame="random"
 bitbucket=$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep "Permission denied (publickey).")
 github=$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep "Permission denied (publickey).")
 
+confirm() {
+    read -r -p "$1" response
+    case $response in
+        [yY][eE][sS]|[yY])
+            return 0
+            ;;
+        [Nn][Oo]|[Nn])
+            return 1
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 pushd () {
     command pushd $@ &> /dev/null
 }
@@ -108,6 +123,12 @@ setup () {
         pushd "$default_gitdir/$reponame"
     fi
 }
+
+if [[ "$UID" -ne $(stat -tc %u "$default_gitdir") ]]; then
+    if ! confirm "Do you want to use $default_gitdir as your Git Directory?"; then
+        default_gitdir=~/git
+    fi
+fi
 
 opts "$@"
 [[ -n "$dots_only" ]] && setup_dotfiles && exit
