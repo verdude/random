@@ -17,6 +17,7 @@ folder="$DOTDIR"
 if [[ -z "$folder" ]] && [[ -f "$HOME/.bashrc" ]]; then
     echo "sourcing"
     source "$HOME/.bashrc"
+    folder="$DOTDIR"
 else
     error_exit
 fi
