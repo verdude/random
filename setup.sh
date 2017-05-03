@@ -2,7 +2,7 @@
 
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
-directory=$(basename $(dirname $0))
+scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
 reponame="random"
 bitbucket=$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep "Permission denied (publickey).")
 github=$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep "Permission denied (publickey).")
@@ -97,15 +97,11 @@ setup_dotfiles () {
 }
 
 add_scripts () {
-    echo $PWD
     ./add_scripts.sh
 }
 
 setup () {
     mkdir -p "$default_gitdir"
-    wd="$PWD"
-    echo "hi $PWD"
-    echo "$wd"
     pushd "$default_gitdir"
     if [[ ! -d "$reponame" ]]; then
         if [[ -z "$github" ]]; then
@@ -113,22 +109,16 @@ setup () {
         else
             url="https://github.com/verdude/$reponame"
         fi
-        echo "cloning into $PWD"
+        # TODO prompt user for a different reponame if they so desire
         git clone "$url"
     fi
     cd "$reponame"
-    nwd="$PWD"
-    echo "new: $nwd"
     # delete the random repo if it isn't in the $default_gitdir
-    if [[ "$wd" != "$nwd" ]]; then
-    echo "$PWD"
-        cd ..
-    echo "$PWD"
-        echo "deleting $nwd"
-        rm -rf "$nwd"
+    if [[ "$scriptpath" != "$PWD" ]]; then
+        echo "deleting $PWD"
+        rm -rf "$scriptpath"
     fi
-    echo "$default_gitdir"
-    cd "$default_gitdir/$reponame"
+    # TODO: check if this is the same repo that we cloned
 }
 
 if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
