@@ -104,8 +104,8 @@ add_scripts () {
 setup () {
     mkdir -p "$default_gitdir"
     wd="$PWD"
-    echo "hi"
-    echo "$WD"
+    echo "hi $PWD"
+    echo "$wd"
     pushd "$default_gitdir"
     if [[ ! -d "$reponame" ]]; then
         if [[ -z "$github" ]]; then
@@ -117,8 +117,8 @@ setup () {
         git clone "$url"
     fi
     cd "$reponame"
-    echo "$PWD"
     nwd="$PWD"
+    echo "new: $nwd"
     # delete the random repo if it isn't in the $default_gitdir
     if [[ "$wd" != "$nwd" ]]; then
     echo "$PWD"
