@@ -77,6 +77,7 @@ setup_dotfiles () {
     else
         if [[ ! -d "dots" ]]; then
             git clone git@bitbucket.org:santim/dots
+            cd dots
         else
             cd dots
             git pull
