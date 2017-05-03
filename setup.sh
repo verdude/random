@@ -4,6 +4,7 @@ dots_only=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
 reponame="random"
+repo_script_dir="thechosenones"
 bitbucket=$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep "Permission denied (publickey).")
 github=$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep "Permission denied (publickey).")
 
@@ -31,7 +32,7 @@ popd () {
 }
 
 opts () {
-    for opt in $@; do
+    for opt in "$@"; do
         if [[ "$opt" = "--dots" ]]; then
             dots_only="true"
         fi
@@ -39,7 +40,7 @@ opts () {
 }
 
 setup_git () {
-    git_setup
+    $repo_script_dir/git_setup.sh
 }
 
 setup_vim () {
