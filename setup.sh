@@ -3,8 +3,6 @@
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
 directory=$(basename $(dirname $0))
-echo "$directory"
-exit
 reponame="random"
 bitbucket=$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep "Permission denied (publickey).")
 github=$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep "Permission denied (publickey).")
@@ -101,7 +99,14 @@ setup () {
     fi
     cd "$reponame"
     nwd="$PWD"
-    if [[ "$wd" != "$nwd" ]]
+    # delete the random repo if it isn't in the $default_gitdir
+    if [[ "$wd" != "$nwd" ]]; then
+        popd
+        cd ..
+        echo "deleting $nwd"
+        rm -rf "$nwd"
+        pushd "$default_gitdir/$reponame"
+    fi
 }
 
 opts "$@"
