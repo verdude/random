@@ -104,6 +104,7 @@ add_scripts () {
 setup () {
     mkdir -p "$default_gitdir"
     wd="$PWD"
+    echo "$WD"
     pushd "$default_gitdir"
     if [[ ! -d "$reponame" ]]; then
         if [[ -z "$github" ]]; then
