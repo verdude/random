@@ -121,8 +121,9 @@ setup () {
         cd ..
         echo "deleting $nwd"
         rm -rf "$nwd"
-        pushd "$default_gitdir/$reponame"
     fi
+    echo "$default_gitdir"
+    cd "$default_gitdir/$reponame"
 }
 
 if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
