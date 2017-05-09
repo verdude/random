@@ -14,12 +14,15 @@ error_exit () {
 }
 
 folder="$DOTDIR"
-if [[ -z "$folder" ]] && [[ -f "$HOME/.bashrc" ]]; then
-    echo "sourcing"
-    source "$HOME/.bashrc"
-    folder="$DOTDIR"
-else
-    error_exit
+echo "$DOTDIR"
+if [[ -z "$folder" ]]; then
+    if [[ -f "$HOME/.bashrc" ]]; then
+        echo "sourcing"
+        source "$HOME/.bashrc"
+        folder="$DOTDIR"
+    else
+        error_exit
+    fi
 fi
 filename=.repos.txt
 repofile="$folder/$filename"
@@ -44,5 +47,4 @@ if [[ -f "$repofile" ]]; then
 else
     error_exit
 fi
-
 
