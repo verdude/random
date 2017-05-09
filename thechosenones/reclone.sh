@@ -14,7 +14,6 @@ error_exit () {
 }
 
 folder="$DOTDIR"
-echo "$DOTDIR"
 if [[ -z "$folder" ]]; then
     if [[ -f "$HOME/.bashrc" ]]; then
         echo "sourcing"
@@ -24,6 +23,8 @@ if [[ -z "$folder" ]]; then
         error_exit
     fi
 fi
+
+folder="$DOTDIR"
 filename=.repos.txt
 repofile="$folder/$filename"
 if [[ -f "$repofile" ]]; then
