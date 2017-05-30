@@ -115,6 +115,7 @@ setup () {
     fi
     cd "$reponame"
     # delete the random repo if it isn't in the $default_gitdir
+    # TODO: don't delete if is not in random repo
     if [[ "$scriptpath" != "$PWD" ]]; then
         echo "deleting $scriptpath"
         rm -rf "$scriptpath"
