@@ -47,9 +47,13 @@ setup_vim () {
     if [[ -d ~/.local/share/fonts ]]; then
         echo "Skipping font install."
     else
-        git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
         git clone https://github.com/powerline/fonts; cd fonts; ./install.sh; cd ../; rm -rf fonts
         # vim -c "PluginInstall|qa"
+    fi
+    if [[ -d ~/.vim/bundle/Vundle.vim ]]; then
+        echo "Skipping Vundle install"
+    else
+        git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
     fi
 }
 
