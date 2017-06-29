@@ -82,7 +82,7 @@ setup_dotfiles () {
             cd dots
             git pull
         fi
-        ./link.sh
+        ./link.sh --force
         if [[ -n "$github" ]]; then
             cat ~/.ssh/id_rsa.pub | xclip -sel clip
             echo "add key to github (it's in the paste buffer)"
