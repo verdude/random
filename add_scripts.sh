@@ -1,5 +1,7 @@
 #!/bin/bash
 
+scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
+
 if [[ ! -d ~/bin ]]; then
     mkdir ~/bin
 fi
@@ -14,44 +16,15 @@ popd () {
 
 scripts_dirname="thechosenones"
 
-check_for_random_repo () {
+check_for_script_folder () {
     # perhaps use find?
     # perhaps search for  $scripts_dirname
-    if [[ -d random ]]; then
-        cd random
-        git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-        if [[ -n $git_root ]]; then
-            if [[ -d "$scripts_dirname" ]]; then
-                echo "Found $scripts_dirname directory"
-            else
-                echo "Repository with $scripts_dirname not found. Exiting."
-                exit 1
-            fi
-        else
-            echo "Repository with $scripts_dirname not found. Exiting."
-            exit 1
-        fi
+    # TODO: add a search for the scripts_dirname folder
+    if [[ -d "$scripts_dirname" ]]; then
+        echo "Found $scripts_dirname directory"
     else
-        echo "Rudimentary search for repo with $scripts_dirname failed. Perhaps we need a less rudimentary seach."
-        exit
-    fi
-}
-
-# makes sure we are in the correct directory 
-# by checking the git root
-check_git () {
-    git_root=$(git rev-parse --show-toplevel 2>/dev/null)
-
-    if [[ -z $git_root ]]; then
-        echo "Why are we in $PWD?"
-        if [[ -z $GITDIR ]]; then
-            echo '$GITDIR not found.'
-            echo "Checking for 'random' repository..."
-            check_for_random_repo
-        else
-            cd $GITDIR
-            check_for_random_repo
-        fi
+        echo "Repository with $scripts_dirname not found. Exiting."
+        exit 1
     fi
 }
 
@@ -65,15 +38,19 @@ link_files () {
 }
 
 main () {
+    scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
+    cd $scriptpath
+
     if [[ -d $scripts_dirname ]]; then
         link_files "$scripts_dirname"
     elif [[ "${PWD##*/}" = "thechosenones" ]]; then
         pushd ..
         link_files "$scripts_dirname"
         popd
+    else
+        check_for_script_folder
     fi
 }
 
-check_git
 main
 
