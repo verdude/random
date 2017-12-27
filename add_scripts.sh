@@ -35,7 +35,7 @@ link_files () {
         echo "$fname"
         linkname=$(python -c "print '$file'.split('/')[-1].split('.')[0]")
         echo "$linkname"
-        ln -s fname "$rel$linkname" 2>/dev/null
+        ln -s -f "$fname" "$rel$linkname" 2>/dev/null
     done
     echo "done"
 }
