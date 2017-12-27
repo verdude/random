@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
@@ -66,10 +66,14 @@ setup_tmux() {
 }
 
 setup_folders () {
+    mkdir -p ~/bin ~/dls
+    if [[ $(uname) = "Darwin" ]]; then
+        echo "Skipping removing folders because macOS"
+        return
+    fi
     for x in $(ls ~ | grep "^[A-Z]"); do
         rm -rf ~/$x
     done
-    mkdir -p ~/bin ~/dls
 }
 
 setup_dotfiles () {
@@ -86,7 +90,7 @@ setup_dotfiles () {
             cd dots
             git pull
         fi
-        ./link.sh --force
+        ./link.py
         if [[ -n "$github" ]]; then
             cat ~/.ssh/id_rsa.pub | xclip -sel clip
             echo "add key to github (it's in the paste buffer)"
