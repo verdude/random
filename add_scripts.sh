@@ -31,8 +31,11 @@ check_for_script_folder () {
 link_files () {
     rel=~/bin/
     for file in $(ls $1); do
-        fname=$(python -c "print '$file'.split('/')[-1].split('.')[0]")
-        ln -s $(readlink -e "$scripts_dirname/$file") "$rel$fname" 2>/dev/null
+        fname=$(echo "$scripts_dirname/$file" | python -c 'import os;import sys; print os.path.abspath(sys.stdin.read())')
+        echo "$fname"
+        linkname=$(python -c "print '$file'.split('/')[-1].split('.')[0]")
+        echo "$linkname"
+        ln -s fname "$rel$linkname" 2>/dev/null
     done
     echo "done"
 }
