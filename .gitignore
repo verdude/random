@@ -4,6 +4,7 @@
 \.*rc
 *.swp
 **.ropeproject
+.DS_Store
 .#*
 *.pyc
 **build
