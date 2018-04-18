@@ -5,7 +5,7 @@ FLAGS=
 all: delay
 
 delay:
-	$(CXX) -o ./build/b *.c
+	$(CXX) -o build test.c -lm
 
 clean:
-	rm -f build/*
+	rm -f build
