@@ -2,6 +2,7 @@
 
 environment=""
 
+# find the environment
 for file in $(ls); do
    if [[ -d "$file" ]]; then
        cd "$file"
@@ -16,7 +17,7 @@ done
 
 if [[ -z "$environment" ]]; then
     echo "creating virtual environment"
-    virtualenv -p python3 env
+    virtualenv -p ${1:-python3} env
     environment="env"
 fi
 
@@ -24,8 +25,11 @@ fi
 
 # make script check if there is a requirements file and 
 # and then load it in
-req=$(ls -1 req*.txt)
+req=$(ls -1 req*.txt 2>/dev/null)
 if [[ -n $req ]]; then
     pip install -r $req
+else
+    echo "Brother, I regret to inform you that a requirements file has not been found."
+    echo "While this may come as a shock to you, it is most likely that it is not."
 fi
 
