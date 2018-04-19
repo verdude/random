@@ -20,7 +20,7 @@ class Texter():
         number = number or self.config["default"]
         logging.info("seding message to: %s", str(number))
         logging.info("Sending message: %s", message)
-        self.tc.messages.create(body=self.message, to=str(number), from_=str(self.config["number"]))
+        self.tc.messages.create(body=message, to=str(number), from_=str(self.config["number"]))
 
 def parse_options():
     parser = argparse.ArgumentParser(prog="updates", description="Send Text", add_help=True)
@@ -45,4 +45,4 @@ if __name__ == "__main__":
         lg_level = logging.INFO
     logging.basicConfig(level=lg_level)
     message = args.message if args.message is not None else get_message()
-    Texter().send(number, message)
+    Texter().send(args.number, message)
