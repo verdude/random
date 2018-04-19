@@ -147,8 +147,9 @@ def main():
     except smtplib.SMTPRecipientsRefused, e:
         logging.error(bcolors.color("[%s]'s probly not an email." % args.to, "FAIL", b=True))
 
-try:
-    main()
-except KeyboardInterrupt:
-    print "\n" + bcolors.color("Caught Keyboard Interrupt. Exiting.", "WARNING", b=True)
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print "\n" + bcolors.color("Caught Keyboard Interrupt. Exiting.", "WARNING", b=True)
 

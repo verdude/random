@@ -9,7 +9,7 @@ type Node{T}
 end
 
 function insert{T}( value::T )
-
 end
 
 end
+
