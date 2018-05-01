@@ -11,7 +11,7 @@ if ap == "":
 else:
     color = "#00FF00"
 
-print ap
-print ap
-print color
+print(ap)
+print(ap)
+print(color)
 

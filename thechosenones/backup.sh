@@ -17,10 +17,10 @@ popd () {
 
 
 annotate_repo () {
-    updir () { echo $1 | python -c "import sys;i=sys.stdin.read();i=i.rstrip('/');print i[:0-len(i.split('/')[-1])].rstrip('/')"; }
+    updir () { echo $1 | python -c "import sys;i=sys.stdin.read();i=i.rstrip('/');print(i[:0-len(i.split('/')[-1])].rstrip('/'))"; }
     repo_parent () { updir $(git rev-parse --show-toplevel 2>/dev/null); }
     fix_dir () { if [[ -n $(pwd | grep "\.git") ]]; then updir $(pwd); else echo $(pwd); fi; }
-    relpath() { python -c "import os.path; print os.path.relpath('$1','${2:-$PWD}')" ; }
+    relpath() { python -c "import os.path; print(os.path.relpath('$1','${2:-$PWD}'))" ; }
     remote () { if [[ -n $(git remote 2>/dev/null) ]]; then git remote get-url --all $(git remote); fi; }
     curr_lvl () { printf '%s\n' "${PWD##*/}"; }
     if [[ ! -d $1 ]] | [[ $# -ne 1 ]]; then
