@@ -151,5 +151,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "\n" + bcolors.color("Caught Keyboard Interrupt. Exiting.", "WARNING", b=True)
+        print("\n" + bcolors.color("Caught Keyboard Interrupt. Exiting.", "WARNING", b=True))
 
