@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -x
 
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
@@ -133,12 +133,17 @@ setup () {
     # TODO: check if this is the same repo that we cloned
 }
 
+the_cleaners () {
+    
+}
+
 if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
     if ! confirm "Do you want to use $default_gitdir as your Git Directory? [y/N]: "; then
         default_gitdir=~/git
     fi
 fi
 
+trap the_cleaners EXIT
 opts "$@"
 [[ -n "$dots_only" ]] && setup_dotfiles && exit
 setup
