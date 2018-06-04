@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 dots_only=""
 default_gitdir=${GITDIR:-~/git}
@@ -126,6 +127,7 @@ setup () {
     # TODO: don't delete if is not in random repo
     if [[ "$scriptpath" != "$PWD" ]]; then
         echo "deleting $scriptpath"
+        exit
         rm -rf "$scriptpath"
     fi
     # TODO: check if this is the same repo that we cloned
