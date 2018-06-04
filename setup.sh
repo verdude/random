@@ -134,7 +134,7 @@ setup () {
 }
 
 the_cleaners () {
-    
+    echo AN ERROR OCCURRED!!?!?!??
 }
 
 if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
