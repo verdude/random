@@ -20,7 +20,7 @@ confirm() {
             return 1
             ;;
         *)
-            return 1
+            return ${2:-1}
             ;;
     esac
 }
@@ -140,7 +140,7 @@ setup () {
 }
 
 if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
-    if ! confirm "Do you want to use $default_gitdir as your Git Directory? [y/N]: "; then
+    if ! confirm "Do you want to use $default_gitdir as your Git Directory? [y/N]: " 0; then
         default_gitdir=~/git
     fi
 fi
