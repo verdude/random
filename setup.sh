@@ -6,7 +6,7 @@ default_gitdir=${GITDIR:-~/git}
 scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
 reponame="random"
 repo_script_dir="thechosenones"
-bitbucket="$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep 'Permission denied (publickey).')"
+bitbucket="$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep 'Permission denied (publickey).')" && :
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
 confirm() {
