@@ -113,7 +113,7 @@ setup_dotfiles () {
 }
 
 add_scripts () {
-    ./add_scripts.sh
+    ./add_scripts.sh -q
 }
 
 setup () {
