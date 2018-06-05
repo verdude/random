@@ -94,7 +94,11 @@ setup_dotfiles () {
             cd dots
             git pull
         fi
-        ./link.py
+        if [[ -z "$(which python)" ]]; then
+            echo "Python not found."
+            return 1
+        fi
+        ./link.py -f
         if [[ -n "$github" ]]; then
             cat ~/.ssh/id_rsa.pub | xclip -sel clip
             echo "add key to github (it's in the paste buffer)"
