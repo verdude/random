@@ -107,7 +107,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=lg_level)
 
     if args.clock_out is not None and args.clock_in is not None:
-        elapsed = calc_elapsed(args.clock, args.clock_out)
+        elapsed = calc_elapsed(args.clock_in, args.clock_out)
         print("Elapsed Time: %s" % elapsed)
     elif args.clock_in is not None and args.total is not None:
         clock_out_time = calc_out(args.clock_in, args.total, args.desired)
