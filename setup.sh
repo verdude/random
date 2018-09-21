@@ -118,7 +118,7 @@ add_scripts () {
 
 setup () {
     mkdir -p "$default_gitdir"
-    pushd "$default_gitdir"
+    cd "$default_gitdir"
     if [[ ! -d "$reponame" ]]; then
         if [[ -z "$github" ]]; then
             url="git@github.com:verdude/$reponame"
@@ -129,13 +129,6 @@ setup () {
         git clone "$url"
     fi
     cd "$reponame"
-    # delete the random repo if it isn't in the $default_gitdir
-    # TODO: don't delete if is not in random repo
-    if [[ "$scriptpath" != "$PWD" ]]; then
-        echo "deleting $scriptpath"
-        rm -rf "$scriptpath"
-    fi
-    # TODO: check if this is the same repo that we cloned
 }
 
 if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
