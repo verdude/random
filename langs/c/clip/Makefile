@@ -1,7 +1,7 @@
-CC = gcc
+CC = cc
 CXXFLAGS=-w -Wall
 
-LIBS =
+LIBS = `pkg-config --libs libevent_openssl`
 
 SRC = $(wildcard *.c)
 BUILDDIR = build
@@ -16,10 +16,10 @@ folder:
 	mkdir -p build
 
 $(EXE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXE)
+	$(CC) $(OBJECTS) -o $(EXE) $(LIBS)
  
 $(BUILDDIR)/%.o: %.c
-	$(CC) -c $(CXXFLAGS) $< -o $@ $(LIBS)
+	$(CC) $(CXXFLAGS) -c $< -o $@ $(LIBS)
 
 clean:
 	rm -rf $(BUILDDIR)

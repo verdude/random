@@ -4,5 +4,6 @@
 
 int main(int argc, char **argv) {
     puts("hi");
+    libevent_global_shutdown();
 }
 
