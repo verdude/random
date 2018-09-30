@@ -15,28 +15,35 @@ void accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
 
 }
 
-void accept_error_cb(struct evconnlistener *listener, evutil_socket_t fd,
-        struct sockaddr *address, int socklen, void *ctx) {
-
+void accept_error_cb(struct evconnlistener *listener, void *ptr) {
     
-
 }
 
 int main(int argc, char **argv) {
     struct event_base* ev_base = event_base_new();
-    struct sockaddr_in sin = {
-        .sin_family = AF_INET,
-        .sin_port = htonl(2001),
-        .sin_addr = {
-            .s_addr = htons(0)
-        }
-    };
+    struct sockaddr_in sin;
     rctx *ctx = NULL;
+    int port = 2001;
+
+    if (argc > 1) {
+        port = atoi(argv[1]);
+    }
+    if (port <= 0 || port > 65535) {
+       fprintf(stderr, "Invalid Port.\n");
+       return 1;
+    }
+    fprintf(stdout, "Going to Use Port %i\n", port);
+
+    memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = htonl(0);
+    sin.sin_port = htons(port);
+
     struct evconnlistener* listener = evconnlistener_new_bind(ev_base, accept_cb, ctx,
             LEV_OPT_CLOSE_ON_FREE | LEV_OPT_THREADSAFE | LEV_OPT_REUSEABLE, -1, (struct sockaddr*)&sin, sizeof(sin));
 
     if (!listener) {
-        fprintf(stderr, "Could not create listener.\n");
+        perror("Could not create listener.\n");
         return 1;
     }
 
