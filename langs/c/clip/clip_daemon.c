@@ -1,29 +1,140 @@
 #include <event2/event.h>
 #include <event2/listener.h>
+#include <event2/bufferevent.h>
+#include <event2/buffer.h>
 #include <sys/socket.h>
-#include <unistd.h>
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+
+#define GREETING_LEN 2
+#define GREETING 0x1337
 
 typedef struct {
-    char* r;
-} rctx;
+    char* pd;
+    size_t xlen;
+    size_t rlen;
+} pdctx_t;
+
+pdctx_t *create_pdctx() {
+    pdctx_t *p = malloc(sizeof(pdctx_t));
+    memset(p, 0, sizeof(pdctx_t));
+    return p;
+}
+
+void free_pdctx(pdctx_t *ctx) {
+    if (!ctx) {
+        return;
+    }
+    if (ctx->pd) {
+        free(ctx->pd);
+    }
+    free(ctx);
+}
+
+void reader_cb(struct bufferevent *bev, void* ctx) {
+    pdctx_t *pdc = ctx;
+    struct evbuffer *input = bufferevent_get_input(bev);
+    size_t len = evbuffer_get_length(input);
+    char greeting[GREETING_LEN+1] = {0};
+    unsigned short g;
+
+    if (len > 3 && pdc->xlen == 0) {
+        bufferevent_read(bev, greeting, GREETING_LEN);
+        g = *(short*)greeting;
+        if (g != GREETING) {
+            fprintf(stderr, "Invalid greeting: [%i]\n", g);
+            free_pdctx(ctx);
+            bufferevent_free(bev);
+            return;
+        }
+        memset(greeting, 0, GREETING_LEN);
+        bufferevent_read(bev, greeting, 2);
+        // did two reads of 2 bytes each
+        len -= GREETING_LEN * 2;
+        g = *(short*)greeting;
+        if (g <= 0 || g > 2048) {
+            fprintf(stderr, "Invalid content length: [%i].\n", g);
+            free_pdctx(ctx);
+            bufferevent_free(bev);
+            return;
+        }
+        else {
+            pdc->xlen = g;
+            pdc->pd = calloc(g+1, sizeof(char));
+        }
+    }
+
+    if (len > 0 && pdc->xlen > 0 && pdc->rlen < pdc->xlen) {
+        int ret = bufferevent_read(bev, pdc->pd + pdc->rlen, len);
+        if (ret == -1) {
+            return;
+        }
+        pdc->rlen += len;
+        len = 0;
+        if (pdc->rlen == pdc->xlen) {
+            fprintf(stdout, "Got the following string:\n%s\n", pdc->pd);
+            free_pdctx(ctx);
+            bufferevent_free(bev);
+            return;
+        } else {
+            fprintf(stdout, "Got the following string so far:\n%s\n", pdc->pd);
+        }
+    }
+}
+
+void reader_event_cb(struct bufferevent *bev, short events, void *ctx) {
+    if (events & BEV_EVENT_ERROR) {
+        perror("error from bufferevent");
+    }
+    if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
+        // free context
+        free_pdctx(ctx);
+        bufferevent_free(bev);
+    }
+}
 
 void accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
         struct sockaddr *address, int socklen, void *ctx) {
 
-    
+    struct event_base *base = evconnlistener_get_base(listener);
+    struct bufferevent *bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
+    if (!bev) {
+        fprintf(stderr, "...Could not create bufferevent...\n");
+        perror("Same error as above\n");
+    }
 
+    pdctx_t *pdctx = create_pdctx();
+    bufferevent_setcb(bev, reader_cb, NULL, reader_event_cb, pdctx);
+    bufferevent_enable(bev, EV_READ | EV_WRITE);
 }
 
 void accept_error_cb(struct evconnlistener *listener, void *ptr) {
-    
+    struct event_base *base = evconnlistener_get_base(listener);
+    int err = EVUTIL_SOCKET_ERROR();
+    fprintf(stderr, "Got an error %d (%s) on the listener."
+            "Shutting down.\n", err, evutil_socket_error_to_string(err));
+    event_base_loopexit(base, NULL);
+}
+
+void sigint_cb(evutil_socket_t fd, short event, void *arg) {
+    int signum = fd;
+    if (signum == SIGINT) {
+        fprintf(stdout, "Caught SIGINT..Shutting down..\n");
+        event_base_loopbreak(arg);
+    }
+    else {
+        fprintf(stderr, "Caught signal with code: [%i]\n", signum);
+    }
 }
 
 int main(int argc, char **argv) {
     struct event_base* ev_base = event_base_new();
     struct sockaddr_in sin;
-    rctx *ctx = NULL;
+    pdctx_t *ctx = NULL;
     int port = 2001;
+    struct event *sev_int;
 
     if (argc > 1) {
         port = atoi(argv[1]);
@@ -32,7 +143,15 @@ int main(int argc, char **argv) {
        fprintf(stderr, "Invalid Port.\n");
        return 1;
     }
-    fprintf(stdout, "Going to Use Port %i\n", port);
+    fprintf(stdout, "p:%i\n", port);
+
+    sev_int = evsignal_new(ev_base, SIGINT, sigint_cb, ev_base);
+    if (sev_int == NULL) {
+        fprintf(stderr, "Couldn't create sigint handler.\nShutting down.\n");
+        libevent_global_shutdown();
+        return 1;
+    }
+    evsignal_add(sev_int, NULL);
 
     memset(&sin, 0, sizeof(sin));
     sin.sin_family = AF_INET;
@@ -51,6 +170,7 @@ int main(int argc, char **argv) {
 
     event_base_dispatch(ev_base);
 
+    event_free(sev_int);
     evconnlistener_free(listener);
     event_base_free(ev_base);
     libevent_global_shutdown();
