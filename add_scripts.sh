@@ -18,6 +18,10 @@ popd () {
 
 scripts_dirname="thechosenones"
 
+get_clip () {
+    make -C $(find $scriptpath -name clip -type d) install
+}
+
 check_for_script_folder () {
     # perhaps use find?
     # perhaps search for  $scripts_dirname
@@ -46,6 +50,7 @@ main () {
     scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
     cd $scriptpath
 
+    get_clip
     if [[ -d $scripts_dirname ]]; then
         link_files "$scripts_dirname"
     elif [[ "${PWD##*/}" = "thechosenones" ]]; then

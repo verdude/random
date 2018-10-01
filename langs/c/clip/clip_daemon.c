@@ -10,6 +10,10 @@
 
 #define GREETING_LEN 2
 #define GREETING 0x1337
+#define NAME "clipdata"
+#define SUCCESS 1
+#define FAILURE -1
+#define MAX_BUFFER 2048
 
 typedef struct {
     char* pd;
@@ -54,9 +58,9 @@ void reader_cb(struct bufferevent *bev, void* ctx) {
         // did two reads of 2 bytes each
         len -= GREETING_LEN * 2;
         g = *(short*)greeting;
-        if (g <= 0 || g > 2048) {
+        if (g <= 0 || g > MAX_BUFFER) {
             fprintf(stderr, "Invalid content length: [%i].\n", g);
-            free_pdctx(ctx);
+            free_pdctx(pdc);
             bufferevent_free(bev);
             return;
         }
@@ -66,20 +70,23 @@ void reader_cb(struct bufferevent *bev, void* ctx) {
         }
     }
 
+    // recieved full message
     if (len > 0 && pdc->xlen > 0 && pdc->rlen < pdc->xlen) {
         int ret = bufferevent_read(bev, pdc->pd + pdc->rlen, len);
-        if (ret == -1) {
-            return;
-        }
-        pdc->rlen += len;
-        len = 0;
-        if (pdc->rlen == pdc->xlen) {
-            fprintf(stdout, "Got the following string:\n%s\n", pdc->pd);
-            free_pdctx(ctx);
-            bufferevent_free(bev);
-            return;
-        } else {
-            fprintf(stdout, "Got the following string so far:\n%s\n", pdc->pd);
+        if (ret != -1) {
+            pdc->rlen += len;
+            len = 0;
+            if (pdc->rlen == pdc->xlen) {
+                char successret[] = "Thanks for playing.\n";
+                char failureret[] = "FAILURE\n";
+                char* ret = setenv(NAME, pdc->pd, 1) == 0 ? successret : failureret;
+
+                bufferevent_write(bev, ret, strlen(ret));
+                free_pdctx(pdc);
+                // Free'ing the bufferevnet here closes the socket and kills
+                // the connection before the return message can be sent
+                //bufferevent_free(bev);
+            }
         }
     }
 }
@@ -90,7 +97,8 @@ void reader_event_cb(struct bufferevent *bev, short events, void *ctx) {
     }
     if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
         // free context
-        free_pdctx(ctx);
+        pdctx_t* t = (pdctx_t*)ctx;
+        free_pdctx(t);
         bufferevent_free(bev);
     }
 }
