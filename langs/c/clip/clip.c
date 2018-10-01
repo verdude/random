@@ -6,10 +6,7 @@
 #include <string.h>
 #include <signal.h>
 
-#define BUFLEN 2048
-#define HEADING_LEN 4
-#define GREETING (unsigned short)0x1337
-#define PORT 2001
+#include "clipdef.h"
 
 int sock;
 
@@ -26,12 +23,12 @@ int main(int argc, char** argv) {
     struct sockaddr_in serveraddr;
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     char *pd;
-    char msg[BUFLEN+1] = {0};
+    char msg[MAX_BUFLEN+1] = {0};
     char response[20] = {0};
     int reslen, bytes_sent;
 
     if (argc > 1) {
-        pd = strndup(argv[1], BUFLEN-HEADING_LEN-1);
+        pd = strndup(argv[1], MAX_BUFLEN-HEADING_LEN-1);
     }
     else {
         fprintf(stderr, "Brother please...\n");
@@ -55,10 +52,10 @@ int main(int argc, char** argv) {
     }
 
     unsigned short* greeting = (unsigned short*)msg;
-    *greeting = GREETING;
+    *greeting = SET_GREETING;
     greeting = (unsigned short*)(msg+sizeof(unsigned short));
     *greeting = (unsigned short)strlen(pd);
-    strncpy(msg+HEADING_LEN, pd, BUFLEN-HEADING_LEN-1);
+    strncpy(msg+HEADING_LEN, pd, MAX_BUFLEN-HEADING_LEN-1);
 
     if ((bytes_sent = send(sock, msg, HEADING_LEN+*greeting, 0)) == -1) {
         fprintf(stderr, "Failed to send message.\n");
@@ -70,7 +67,7 @@ int main(int argc, char** argv) {
         else if (reslen == -1) {
             perror("recv");
         }
-        else printf("%s", response);
+        else printf("%s\n", response);
     }
     free(pd);
     close(sock);

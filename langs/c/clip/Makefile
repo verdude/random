@@ -27,11 +27,13 @@ $(EXE): $(OBJECTS)
 $(BUILDDIR)/%.o: %.c
 	$(CC) $(CXXFLAGS) -c $< -o $@ $(LIBS)
 
-$(CLIENT_EXE): $(CLIENT_SRC) build
+$(CLIENT): build $(CLIENT_EXE)
+
+$(CLIENT_EXE): $(CLIENT_SRC)
 	$(CC) $(CXXFLAGS) -o $(CLIENT_EXE) $(CLIENT_SRC)
 
-.PHONY: clean all install
-all: $(DAEMON) $(CLIENT_EXE)
+.PHONY: clean all install $(CLIENT)
+all: $(DAEMON) $(CLIENT)
 
 install: all
 	cp $(EXE) $$GITDIR/random/thechosenones/$(DAEMON)

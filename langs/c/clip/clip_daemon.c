@@ -8,12 +8,8 @@
 #include <stdlib.h>
 #include <signal.h>
 
-#define GREETING_LEN 2
-#define GREETING 0x1337
-#define NAME "clipdata"
-#define SUCCESS 1
-#define FAILURE -1
-#define MAX_BUFFER 2048
+#include "clipdef.h"
+
 
 typedef struct {
     char* pd;
@@ -37,48 +33,55 @@ void free_pdctx(pdctx_t *ctx) {
     free(ctx);
 }
 
-void reader_cb(struct bufferevent *bev, void* ctx) {
+void reader_event_cb(struct bufferevent *bev, short events, void *ctx) {
+    if (events & BEV_EVENT_ERROR) {
+        perror("error from bufferevent");
+    }
+    if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
+        // free context
+        pdctx_t* t = (pdctx_t*)ctx;
+        free_pdctx(t);
+        bufferevent_free(bev);
+    }
+}
+
+void set_data_cb(struct bufferevent *bev, void *ctx) {
     pdctx_t *pdc = ctx;
     struct evbuffer *input = bufferevent_get_input(bev);
     size_t len = evbuffer_get_length(input);
-    char greeting[GREETING_LEN+1] = {0};
-    unsigned short g;
+    char *mlen[MSG_LEN_BYTES] = {0};
+    int xlen;
 
-    if (len > 3 && pdc->xlen == 0) {
-        bufferevent_read(bev, greeting, GREETING_LEN);
-        g = *(short*)greeting;
-        if (g != GREETING) {
-            fprintf(stderr, "Invalid greeting: [%i]\n", g);
-            free_pdctx(ctx);
-            bufferevent_free(bev);
-            return;
-        }
-        memset(greeting, 0, GREETING_LEN);
-        bufferevent_read(bev, greeting, 2);
-        // did two reads of 2 bytes each
-        len -= GREETING_LEN * 2;
-        g = *(short*)greeting;
-        if (g <= 0 || g > MAX_BUFFER) {
-            fprintf(stderr, "Invalid content length: [%i].\n", g);
+    // get length of the message
+    if (len > 1 && pdc->xlen == 0) {
+        bufferevent_read(bev, mlen, MSG_LEN_BYTES);
+        len -= MSG_LEN_BYTES;
+        xlen = *(short*)mlen;
+        if (xlen <= 0 || xlen > MAX_BUFLEN) {
+            fprintf(stderr, "Invalid content length: [%i].\n", xlen);
             free_pdctx(pdc);
             bufferevent_free(bev);
             return;
         }
         else {
-            pdc->xlen = g;
-            pdc->pd = calloc(g+1, sizeof(char));
+            pdc->xlen = xlen;
+            pdc->pd = calloc(xlen+1, sizeof(char));
+            bufferevent_setcb(bev, set_data_cb, NULL, reader_event_cb, pdc);
+            if (len > 0) {
+                set_data_cb(bev, pdc);
+            }
         }
     }
 
-    // recieved full message
+    // ready to read message
     if (len > 0 && pdc->xlen > 0 && pdc->rlen < pdc->xlen) {
         int ret = bufferevent_read(bev, pdc->pd + pdc->rlen, len);
         if (ret != -1) {
             pdc->rlen += len;
             len = 0;
             if (pdc->rlen == pdc->xlen) {
-                char successret[] = "Thanks for playing.\n";
-                char failureret[] = "FAILURE\n";
+                char successret[] = "Thanks for playing.";
+                char failureret[] = "FAILURE.";
                 char* ret = setenv(NAME, pdc->pd, 1) == 0 ? successret : failureret;
 
                 bufferevent_write(bev, ret, strlen(ret));
@@ -91,16 +94,42 @@ void reader_cb(struct bufferevent *bev, void* ctx) {
     }
 }
 
-void reader_event_cb(struct bufferevent *bev, short events, void *ctx) {
-    if (events & BEV_EVENT_ERROR) {
-        perror("error from bufferevent");
+void reader_cb(struct bufferevent *bev, void* ctx) {
+    pdctx_t *pdc = ctx;
+    struct evbuffer *input = bufferevent_get_input(bev);
+    size_t len = evbuffer_get_length(input);
+    char greeting[GREETING_LEN] = {0};
+    unsigned short g;
+
+    if (len > 1 && pdc->xlen == 0) {
+        bufferevent_read(bev, greeting, GREETING_LEN);
+        g = *(short*)greeting;
+        len -= GREETING_LEN;
+        if (g == SET_GREETING) {
+            bufferevent_setcb(bev, set_data_cb, NULL, reader_event_cb, pdc);
+            if (len > 0) {
+                set_data_cb(bev, pdc);
+            }
+        }
+        else if (g == GET_GREETING){
+            char* data = getenv(NAME);
+            if (data == NULL) {
+                char error[RESPONSE_LEN_BYTES] = {0};
+                unsigned short *errn = (unsigned short*)error;
+                *errn = ERROR_NOT_FOUND;
+                bufferevent_write(bev, errn, RESPONSE_LEN_BYTES);
+            }
+            else {
+                bufferevent_write(bev, data, strnlen(data, MAX_BUFLEN));
+            }
+            free_pdctx(pdc);
+        }
+        else {
+            free_pdctx(pdc);
+            bufferevent_free(bev);
+        }
     }
-    if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
-        // free context
-        pdctx_t* t = (pdctx_t*)ctx;
-        free_pdctx(t);
-        bufferevent_free(bev);
-    }
+
 }
 
 void accept_cb(struct evconnlistener *listener, evutil_socket_t fd,
@@ -141,7 +170,7 @@ int main(int argc, char **argv) {
     struct event_base* ev_base = event_base_new();
     struct sockaddr_in sin;
     pdctx_t *ctx = NULL;
-    int port = 2001;
+    int port = PORT;
     struct event *sev_int;
 
     if (argc > 1) {
