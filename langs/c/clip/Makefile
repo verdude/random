@@ -32,11 +32,14 @@ $(CLIENT): build $(CLIENT_EXE)
 $(CLIENT_EXE): $(CLIENT_SRC)
 	$(CC) $(CXXFLAGS) -o $(CLIENT_EXE) $(CLIENT_SRC)
 
-.PHONY: clean all install $(CLIENT)
+.PHONY: clean all install install-clip $(CLIENT)
 all: $(DAEMON) $(CLIENT)
 
 install: all
 	cp $(EXE) $$GITDIR/random/thechosenones/$(DAEMON)
+	cp $(CLIENT_EXE) $$GITDIR/random/thechosenones/$(CLIENT)
+
+install-$(CLIENT): $(CLIENT)
 	cp $(CLIENT_EXE) $$GITDIR/random/thechosenones/$(CLIENT)
 
 clean:
