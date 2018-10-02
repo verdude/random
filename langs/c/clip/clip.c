@@ -2,6 +2,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -46,6 +47,18 @@ int get_ip(char *hostname, char* ip) {
     return 0;
 }
 
+int is_hostname(char *s) {
+    if (!s) {
+        return -1;
+    }
+    else if (isdigit(s[0])) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
+
 int main(int argc, char** argv) {
     struct sockaddr_in serveraddr;
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -53,7 +66,7 @@ int main(int argc, char** argv) {
     char msg[MAX_BUFLEN+1] = {0};
     char response[20] = {0};
     char ip[20] = {0};
-    int reslen, bytes_sent;
+    int reslen, bytes_sent, ishostname;
 
     if (argc > 2) {
         pd = strndup(argv[1], MAX_BUFLEN-HEADING_LEN-1);
@@ -68,9 +81,14 @@ int main(int argc, char** argv) {
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(PORT);
 
-    if (get_ip(argv[1], ip) != 0) {
-        fprintf(stderr, "Could not find host: %s\n", argv[1]);
-        return 1;
+    if ((ishostname = is_hostname(argv[1])) == 0) {
+        strncpy(ip, argv[1], 15);
+    }
+    else if (ishostname == 0) {
+        if (get_ip(argv[1], ip) != 0) {
+            fprintf(stderr, "Could not find host: %s\n", argv[1]);
+            return 1;
+        }
     }
     if (inet_pton(AF_INET, ip, &serveraddr.sin_addr) <= 0) {
         fprintf(stderr, "Hi, There was a problem with the piton\n");
