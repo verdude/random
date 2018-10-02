@@ -59,8 +59,6 @@ void set_data_cb(struct bufferevent *bev, void *ctx) {
         xlen = *(short*)mlen;
         if (xlen <= 0 || xlen > MAX_BUFLEN) {
             fprintf(stderr, "Invalid content length: [%i].\n", xlen);
-            free_pdctx(pdc);
-            bufferevent_free(bev);
             return;
         }
         else {
@@ -85,10 +83,6 @@ void set_data_cb(struct bufferevent *bev, void *ctx) {
                 char* ret = setenv(NAME, pdc->pd, 1) == 0 ? successret : failureret;
 
                 bufferevent_write(bev, ret, strlen(ret));
-                free_pdctx(pdc);
-                // Free'ing the bufferevnet here closes the socket and kills
-                // the connection before the return message can be sent
-                //bufferevent_free(bev);
             }
         }
     }
@@ -122,7 +116,6 @@ void reader_cb(struct bufferevent *bev, void* ctx) {
             else {
                 bufferevent_write(bev, data, strnlen(data, MAX_BUFLEN));
             }
-            free_pdctx(pdc);
         }
         else {
             free_pdctx(pdc);
