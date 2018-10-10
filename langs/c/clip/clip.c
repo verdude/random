@@ -9,6 +9,7 @@
 #include <signal.h>
 
 #include "clipdef.h"
+#include "cp.h"
 
 int sock;
 
@@ -61,12 +62,15 @@ int is_hostname(char *s) {
 
 int main(int argc, char** argv) {
     struct sockaddr_in serveraddr;
+    server_ipa ipas[MAX_IPAS];
     sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     char *pd;
     char msg[MAX_BUFLEN+1] = {0};
     char response[20] = {0};
     char ip[20] = {0};
     int reslen, bytes_sent, ishostname;
+
+    load_ipas(NULL, ipas, MAX_BUFLEN);
 
     if (argc > 2) {
         pd = strndup(argv[1], MAX_BUFLEN-HEADING_LEN-1);

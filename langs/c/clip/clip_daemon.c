@@ -78,6 +78,7 @@ void set_data_cb(struct bufferevent *bev, void *ctx) {
             pdc->rlen += len;
             len = 0;
             if (pdc->rlen == pdc->xlen) {
+                printf("%s\n", pdc->pd);
                 char successret[] = "Thanks for playing.";
                 char failureret[] = "FAILURE.";
                 char* ret = setenv(NAME, pdc->pd, 1) == 0 ? successret : failureret;

@@ -12,6 +12,8 @@ EXE = $(BUILDDIR)/$(DAEMON:%=%.out)
 
 CLIENT = clip
 CLIENT_SRC = $(CLIENT:%=%.c)
+CP_SRC = cp.c
+CLIENT_OBJS = $(BUILDDIR)/$(CLIENT_SRC:%.c=%.o) $(BUILDDIR)/$(CP_SRC:%.c=%.o)
 CLIENT_EXE = $(BUILDDIR)/$(CLIENT:%=%.out)
 
 top=$(shell git rev-parse --show-top-level)
@@ -29,8 +31,8 @@ $(BUILDDIR)/%.o: %.c
 
 $(CLIENT): build $(CLIENT_EXE)
 
-$(CLIENT_EXE): $(CLIENT_SRC)
-	$(CC) $(CXXFLAGS) -o $(CLIENT_EXE) $(CLIENT_SRC)
+$(CLIENT_EXE): $(CLIENT_OBJS)
+	$(CC) $(CXXFLAGS) -o $(CLIENT_EXE) $(CLIENT_OBJS)
 
 .PHONY: clean all install install-clip $(CLIENT)
 all: $(DAEMON) $(CLIENT)
