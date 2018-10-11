@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
         if (connect(sock, (struct sockaddr*)&ipas[i].addr, sizeof(struct sockaddr_in)) == -1) {
             if (ipas[i].alert) {
                 perror("connect");
-                fprintf(stderr, "Failed to connect to \n");
+                fprintf(stderr, "Failed to connect to %s\n", ipas[i].addrstr);
                 close(sock);
                 break;
             }
