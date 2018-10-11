@@ -3,12 +3,14 @@
 
 #define MAX_IPAS 5
 #define MAXBUFLEN 21
-#define CONFIG "domain.txt"
+#define MAX_IPV4_ADDRLEN 16
+#define CONFIG "~/.domain.txt"
 typedef unsigned char BOOL;
 
 typedef struct {
     struct sockaddr_in addr;
     BOOL alert;
+    char addrstr[MAX_IPV4_ADDRLEN+1];
 } server_ipa;
 
 /**

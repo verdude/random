@@ -60,51 +60,30 @@ int is_hostname(char *s) {
     }
 }
 
-int main(int argc, char** argv) {
+void setup_sockaddr(char *str) {
     struct sockaddr_in serveraddr;
-    server_ipa ipas[MAX_IPAS];
-    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    char *pd;
-    char msg[MAX_BUFLEN+1] = {0};
-    char response[20] = {0};
     char ip[20] = {0};
-    int reslen, bytes_sent, ishostname;
-
-    load_ipas(NULL, ipas, MAX_BUFLEN);
-
-    if (argc > 2) {
-        pd = strndup(argv[1], MAX_BUFLEN-HEADING_LEN-1);
-    }
-    else {
-        fprintf(stderr, "Brother please...\n");
-        return 1;
-    }
-    signal(SIGINT, sigint_proc);
-
-    memset(&serveraddr, 0, sizeof(serveraddr));
+    int ishostname;
+    memset(&serveraddr, 0, sizeof(struct sockaddr_in));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(PORT);
 
-    if ((ishostname = is_hostname(argv[1])) == 0) {
-        strncpy(ip, argv[1], 15);
+    if ((ishostname = is_hostname(str)) == 0) {
+        strncpy(ip, str, 15);
     }
     else if (ishostname == 0) {
-        if (get_ip(argv[1], ip) != 0) {
-            fprintf(stderr, "Could not find host: %s\n", argv[1]);
-            return 1;
+        if (get_ip(str, ip) != 0) {
+            fprintf(stderr, "Could not find host: %s\n", str);
         }
     }
     if (inet_pton(AF_INET, ip, &serveraddr.sin_addr) <= 0) {
         fprintf(stderr, "Hi, There was a problem with the piton\n");
-        return 1;
     }
 
-    if (connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr)) == -1) {
-        perror("connect");
-        fprintf(stderr, "Error connecting\n");
-        return 1;
-    }
+}
 
+int send_msg(int sock, char *pd, char *msg, char *response) {
+    int reslen, bytes_sent;
     unsigned short* greeting = (unsigned short*)msg;
     *greeting = SET_GREETING;
     greeting = (unsigned short*)(msg+sizeof(unsigned short));
@@ -113,18 +92,59 @@ int main(int argc, char** argv) {
 
     if ((bytes_sent = send(sock, msg, HEADING_LEN+*greeting, 0)) == -1) {
         fprintf(stderr, "Failed to send message.\n");
+        return -1;
     }
     else {
         if ((reslen = recv(sock, response, 20, 0)) == 0) {
             fprintf(stderr, "Recieved no bytes for some reason\n");
+            return -1;
         }
         else if (reslen == -1) {
             perror("recv");
+            return -1;
         }
-        else printf("%s\n", response);
+        else  {
+            printf("%s\n", response);
+        }
     }
+    return 0;
+}
+
+int main(int argc, char** argv) {
+    server_ipa ipas[MAX_IPAS];
+    char *pd;
+    char msg[MAX_BUFLEN+1] = {0};
+    char response[20] = {0};
+    int addresses, i;
+
+
+    if (argc > 1) {
+        pd = strndup(argv[1], MAX_BUFLEN-HEADING_LEN-1);
+    }
+    else {
+        fprintf(stderr, "Brother please...\n");
+        return 1;
+    }
+    signal(SIGINT, sigint_proc);
+    addresses = load_ipas(NULL, ipas, MAX_BUFLEN);
+
+    for (i = 0; i < addresses; ++i) {
+        sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        if (connect(sock, (struct sockaddr*)&ipas[i].addr, sizeof(struct sockaddr_in)) == -1) {
+            if (ipas[i].alert) {
+                perror("connect");
+                fprintf(stderr, "Failed to connect to \n");
+                close(sock);
+                break;
+            }
+        }
+        else {
+            send_msg(sock, pd, msg, response);
+        }
+        close(sock);
+    }
+
     free(pd);
-    close(sock);
     return 0;
 }
 

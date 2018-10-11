@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include <limits.h>
 #include <errno.h>
+#include <wordexp.h>
 #include <arpa/inet.h>
 
 #include "cp.h"
+#include "clipdef.h"
 
 static char *skip_space(char *argp)
 {
-    char *endp;
     int i = 0, len;
     if (argp == NULL)
     {
@@ -19,7 +21,6 @@ static char *skip_space(char *argp)
     if (len == MAXBUFLEN) {
         return NULL;
     }
-    endp = argp + len-1;
 
     while (isspace(argp[i]) && argp[i] != '\0' && i < MAXBUFLEN) ++i;
 
@@ -67,6 +68,13 @@ static int new_ipa(char *configline, server_ipa *addr) {
 				return -1;
 			}
 			alert = temp;
+            memset(&addr->addr, 0, sizeof(struct sockaddr_in));
+            addr->addr.sin_family = AF_INET;
+            addr->addr.sin_port = htons(PORT);
+            strncpy(addr->addrstr, configline, MAX_IPV4_ADDRLEN);
+            if (inet_pton(AF_INET, configline, &addr->addr.sin_addr) <= 0) {
+                return -1;
+            }
         }
     }
 
@@ -75,12 +83,18 @@ static int new_ipa(char *configline, server_ipa *addr) {
 
 int load_ipas(const char* fn, server_ipa *ipas, unsigned int n) {
     char line[MAXBUFLEN];
-    server_ipa addr;
     int num_ipas = 0;
+    wordexp_t configfilepath;
     FILE *f;
 
+    if (wordexp(CONFIG, &configfilepath, 0) != 0) {
+        fprintf(stderr, "Name expansion failed for filename: %s", CONFIG);
+        wordfree(&configfilepath);
+        return -1;
+    }
+
     if (fn == NULL) {
-        f = fopen(CONFIG, "r");
+        f = fopen(configfilepath.we_wordv[0], "r");
     }
     else {
         f = fopen(fn, "r");
@@ -88,28 +102,32 @@ int load_ipas(const char* fn, server_ipa *ipas, unsigned int n) {
 
     if (f == NULL) {
         perror("fopen");
+        wordfree(&configfilepath);
         return -1;
     }
 
     while (num_ipas < MAX_IPAS && fgets(line, MAXBUFLEN, f)) {
        if (new_ipa(line, &ipas[num_ipas])) {
            fprintf(stderr, "Error parsing line [%i] in config\n", num_ipas+1);
+            wordfree(&configfilepath);
             return -1;
        }
-       puts(line);
        num_ipas++;
     }
 
     if (num_ipas == 0) {
         fprintf(stderr, "Could not load any IPAS\n");
+        wordfree(&configfilepath);
         return -1;
     }
 
     if (fclose(f) != 0) {
         perror("fclose");
+        wordfree(&configfilepath);
         return -1;
     }
 
-    return num_ipas+1;
+    wordfree(&configfilepath);
+    return num_ipas;
 }
 
