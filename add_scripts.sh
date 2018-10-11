@@ -50,7 +50,6 @@ main () {
     scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
     cd $scriptpath
 
-    get_clip
     if [[ -d $scripts_dirname ]]; then
         link_files "$scripts_dirname"
     elif [[ "${PWD##*/}" = "thechosenones" ]]; then
