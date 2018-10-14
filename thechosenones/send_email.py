@@ -105,7 +105,7 @@ def get_user_response(prompt, multi_line=False, password=False):
     response = ""
     exit = 2
     while 1:
-        chunk = getpass.getpass(prompt=prompt) if password else raw_input(prompt)
+        chunk = getpass.getpass(prompt=prompt) if password else input(prompt)
         if not multi_line:
             response = chunk
             break
@@ -144,7 +144,7 @@ def main():
     args = get_fields(args)
     try:
         send(args, config)
-    except smtplib.SMTPRecipientsRefused, e:
+    except smtplib.SMTPRecipientsRefused:
         logging.error(bcolors.color("[%s]'s probly not an email." % args.to, "FAIL", b=True))
 
 if __name__ == "__main__":
