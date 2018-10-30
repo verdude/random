@@ -9,10 +9,10 @@ fi
 generate() {
     # generates ssh keys
     echo "Make sure to name the key pair 'id_rsa'"
-    ssh-keygen -t rsa -b 4096 -C "santiago.verdu.01@gmail.com"
+    ssh-keygen -t rsa -b 4096 -C $EMAIL
     ssh_agent=`eval "$(ssh-agent -s)"`
     if [[ ! -z ssh_agent ]]; then
-        ssd-add ~/.ssh/id_rsa
+        ssh-add ~/.ssh/id_rsa
         echo "Adding id_rsa to ssh-agent"
     else
         echo "ssh_agent not found"
@@ -41,8 +41,13 @@ confirm() {
     esac
 }
 
-git config --global user.name "Santiago Verdu"
-git config --global user.email "santiago.verdu.01@gmail.com"
+echo $NAME $EMAIL
+if [[ -z "$NAME" ]] || [[ -z "$EMAIL" ]]; then
+    echo 'Need $NAME and $EMAIL'
+    exit 1
+fi
+git config --global user.name $NAME
+git config --global user.email $EMAIL
 git config --global alias.slog "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 git config --global push.default simple
 
