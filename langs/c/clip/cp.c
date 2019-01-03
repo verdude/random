@@ -35,7 +35,7 @@ static char *skip_space(char *argp)
 static int new_ipa(char *configline, server_ipa *addr) {
     int l = 0;
     BOOL alert;
-    int temp;
+    long temp;
     char *alertp, *invalid_char;
 
     if (configline == NULL) {
