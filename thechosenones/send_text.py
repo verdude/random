@@ -7,9 +7,12 @@ import json
 import os
 
 def load_config(filename):
-    with open(filename) as fl:
-        config = json.load(fl)
-        return config
+    config = {}
+    config['account_sid'] = os.environ.get('TWILIO_ACCOUNT_SID')
+    config['auth_token'] = os.environ.get('TWILIO_AUTH_TOKEN')
+    config['from_num'] = os.environ.get('TWILIO_FROM_NUMBER')
+    config['to_num'] = os.environ.get('MY_PHONE')
+    return config
 
 class Texter():
     def __init__(self):
@@ -17,10 +20,10 @@ class Texter():
         self.tc = TwilioRestClient(str(self.config["account_sid"]),str(self.config["auth_token"]))
 
     def send(self, number, message):
-        number = number or self.config["default"]
+        number = number or self.config["to_num"]
         logging.info("seding message to: %s", str(number))
         logging.info("Sending message: %s", message)
-        self.tc.messages.create(body=message, to=str(number), from_=str(self.config["number"]))
+        self.tc.messages.create(body=message, to=str(number), from_=str(self.config["from_num"]))
 
 def parse_options():
     parser = argparse.ArgumentParser(prog="updates", description="Send Text", add_help=True)
