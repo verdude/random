@@ -60,11 +60,11 @@ def calc_out(clock_in, total, desired):
     # check if over 24
     val_out = remaining + val_in
     if val_out > 24:
-        logging.warn("Desired hours cannot be attained, truncating clock-out time to 11:59:59PM")
+        logging.warning("Desired hours cannot be attained, truncating clock-out time to 11:59:59PM")
         remainder = val_out - LATEST_OUT_TIME
         val_out = val_out - remainder
-        logging.warn("Out value adjusted to [%f]" % val_out)
-        logging.warn("Hours remaining after truncation [%f]" % remainder)
+        logging.warning("Out value adjusted to [%f]" % val_out)
+        logging.warning("Hours remaining after truncation [%f]" % remainder)
     out_time = military_to_ampm(val_to_military(val_out))
     return out_time
 
@@ -76,11 +76,11 @@ def calc_in(clock_out, total, desired):
     remaining = desired - total
     val_in = val_out - remaining
     if val_in < 0:
-        logging.warn("Desired hours cannot be attained, truncating clock-in time to 0:00:00AM")
+        logging.warning("Desired hours cannot be attained, truncating clock-in time to 0:00:00AM")
         remainder = EARLIEST_IN_TIME - val_in
         val_in = EARLIEST_IN_TIME
-        logging.warn("In vlaue adjusted to [%f]" % val_out)
-        logging.warn("Hours remaining after truncation [%f]" % remainder)
+        logging.warning("In vlaue adjusted to [%f]" % val_out)
+        logging.warning("Hours remaining after truncation [%f]" % remainder)
     in_time = military_to_ampm(val_to_military(val_in))
     return in_time
 
