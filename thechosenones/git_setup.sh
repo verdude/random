@@ -46,8 +46,8 @@ if [[ -z "$NAME" ]] || [[ -z "$EMAIL" ]]; then
     echo 'Need $NAME and $EMAIL'
     exit 1
 fi
-git config --global user.name $NAME
-git config --global user.email $EMAIL
+git config --global user.name "$NAME"
+git config --global user.email "$EMAIL"
 git config --global alias.slog "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 git config --global push.default simple
 
