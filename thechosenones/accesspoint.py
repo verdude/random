@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os, re
 cmd = os.popen("nmcli -t --fields name c show --active")

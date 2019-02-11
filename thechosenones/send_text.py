@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from twilio.rest import TwilioRestClient
 import argparse

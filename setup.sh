@@ -93,8 +93,8 @@ setup_dotfiles () {
             cd dots
             git pull
         fi
-        if [[ -z "$(which python)" ]]; then
-            echo "Python not found."
+        if [[ -z "$(which python3)" ]]; then
+            echo "Python3 not found."
             return 1
         fi
         #./link.py -f

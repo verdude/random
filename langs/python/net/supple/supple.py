@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 from subprocess import Popen, PIPE, STDOUT
 from threading import Thread
 import sys, argparse, BaseHTTPServer, time, socket, shlex, cmd, os
