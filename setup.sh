@@ -74,7 +74,7 @@ setup_folders () {
     fi
     for x in $(ls ~ | grep "^[A-Z]"); do
         if [[ "$x" != "git" ]] && [[ "$x" != "dls" ]] && [[ "$x" != "bin" ]] ; then
-            rm -rf ~/$x
+            rm -ri ~/$x
         fi
     done
 }
