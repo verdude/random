@@ -87,7 +87,7 @@ setup_dotfiles () {
         echo "Add your ssh keys to bitbucket and github first and then rerun this script with '--dots'"
     else
         if [[ ! -d "dots" ]]; then
-            git clone git@bitbucket.org:santim/dots
+            git clone git@github.com:verdude/dots
             cd dots
         else
             cd dots
