@@ -29,9 +29,7 @@ class Texter():
         if config_path:
             self.config = read_from_file(config_path + "/.texterrc")
         else:
-            print("from env")
             self.config = load_from_env()
-        print(self.config)
         self.tc = TwilioRestClient(str(self.config["account_sid"]),str(self.config["auth_token"]))
 
     def send(self, number, message):
