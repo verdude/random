@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 LOGFILE=${1:-~/.waitlist.log}
+initline=""
 
 log () {
+    [[ -z $initline ]] && echo >> $LOGFILE
+    initline="initialized"
     echo $1 >> $LOGFILE
 }
 
@@ -30,3 +33,5 @@ if [ $spots -ne 0 ]; then
     log "$spots spot(s) available."
     send_text -m "$spots are available"
 fi
+
+printf "." >> $LOGFILE
