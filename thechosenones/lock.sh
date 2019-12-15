@@ -2,10 +2,16 @@
 
 set -e
 
-[[ -n "$(which scrot)" ]] && scrot /tmp/screen.png && convert /tmp/screen.png -scale 4% -scale 2500% /tmp/screen.png
-[[ -f $1 ]] && convert /tmp/screen.png $1 -gravity center -composite -matte /tmp/screen.png
-if [[ -f /tmp/screen.png ]]; then
-    img="-i /tmp/screen.png"
+f=/tmp/screen.png
+if [[ -n "$(which shred)" ]]; then
+    shred -uz $f 2>/dev/null
+else
+    rm -f $f
+fi
+[[ -n "$(which scrot)" ]] && scrot $f && convert $f -scale 4% -scale 2500% $f
+[[ -f $1 ]] && convert $f $1 -gravity center -composite -matte $f
+if [[ -f $f ]]; then
+    img="-i $f"
 else
     img="-c 000000"
 fi
