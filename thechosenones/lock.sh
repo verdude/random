@@ -3,7 +3,7 @@
 set -e
 
 f=/tmp/screen.png
-if [[ -n "$(which shred)" ]]; then
+if [[ -n "$(which shred)" ]] && [[ -f "$f" ]]; then
     shred -uz $f 2>/dev/null
 else
     rm -f $f
