@@ -1,9 +1,25 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import os
 import logging
 import argparse
+import math
+
+class Index:
+    def __init__(self, value, upper_bound=math.inf):
+        self.value = value
+        self.i = self.value - 1
+        self.set_valid(upper_bound)
+
+    def format(self):
+        return self.value
+
+    def index(self):
+        return self.i
+
+    def set_valid(self, upper_bound):
+        self.valid = self.i > 0 and self.i < upper_bound
 
 class Hosts:
     def __init__(self, path=None):
@@ -14,23 +30,31 @@ class Hosts:
         self.lines = []
         self.modified = False
 
-    def remove_host(self, name=None, line=-1):
+    def remove_host(self, name=None, line=None):
+        if type(line) == int:
+            line = Index(line, len(self.lines))
+        elif type(line) == Index:
+            pass
+        else:
+            logging.error("Invalid type for given line number: {}".format(line))
+            sys.exit(1)
+
         if name:
             # remove by name
             logging.error("Remove by name not yet implemented.")
             sys.exit(1)
-        if line > -1:
-            if line < len(self.lines):
-                self.lines.pop(line)
-            else:
-                logging.error("Invalid line number: {}".format(line))
-                sys.exit(1)
+        if line.valid:
+            self.lines.pop(line.index())
+            self.modified = True
+        else:
+            logging.error("Invalid line number: {}".format(line.format()))
+            sys.exit(1)
 
     def read_file(self):
         try:
             hosts_file = open(self.path, "r")
             self.lines = hosts_file.readlines();
-            self.modified = True
+
         except:
             logging.error("failed to open/read {}".format(self.hosts))
             sys.exit(1)
@@ -68,7 +92,7 @@ if __name__ == "__main__":
         hosts.read_file()
     else:
         sys.exit(0)
-    hosts.remove_host(name=args.name, line=args.line-1)
+    hosts.remove_host(name=args.name, line=args.line)
     if args.view:
         hosts.view()
     if args.save:
