@@ -81,7 +81,7 @@ def get_config(config_filename=""):
         return config
 
 def parse_options():
-    parser = argparse.ArgumentParser(prog="updates", description="Send and Email.", add_help=True)
+    parser = argparse.ArgumentParser(prog="updates", description="Send an Email.", add_help=True)
     parser.add_argument("-m", "--message", action="store", help="The email body")
     parser.add_argument("-t", "--to", action="store")
     parser.add_argument("-s", "--subject", action="store")
