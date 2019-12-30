@@ -19,7 +19,7 @@ class Index:
         return self.i
 
     def set_valid(self, upper_bound):
-        self.valid = self.i > 0 and self.i < upper_bound
+        self.valid = self.i >= 0 and self.i < upper_bound
 
 class Hosts:
     def __init__(self, path=None):
