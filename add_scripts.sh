@@ -23,21 +23,21 @@ get_clip () {
 }
 
 check_for_script_folder () {
-    # perhaps use find?
-    # perhaps search for  $scripts_dirname
-    # TODO: add a search for the scripts_dirname folder
-    if [[ -d "$scripts_dirname" ]]; then
-        echo "Found $scripts_dirname directory"
-    else
-        echo "Repository with $scripts_dirname not found. Exiting."
-        exit 1
+    if [[ ! -d "$scripts_dirname" ]]; then
+        dir=$(find ${GITDIR:-.} -name "$scripts_dirname" -maxdepth 2 -type d -quit)
+        if [[ -z "$dir" ]]; then
+            echo "Repository with $scripts_dirname not found. Exiting."
+            exit 1
+        fi
     fi
+
+    echo "Found $scripts_dirname directory"
 }
 
 link_files () {
     rel=~/bin/
     for file in $(ls $1); do
-        fname=$(echo "$scripts_dirname/$file" | python3 -c 'import os;import sys; print(os.path.abspath(sys.stdin.read()))')
+        fname=$(python3 -c "print(os.path.abspath('$scripts_dirname/$file'))")
         [[ "$quiet" != "-q" ]] && echo "$fname"
         linkname=$(python3 -c "print('$file'.split('/')[-1].split('.')[0])")
         [[ "$quiet" != "-q" ]] && echo "$linkname"

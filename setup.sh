@@ -6,7 +6,6 @@ default_gitdir=${GITDIR:-~/git}
 scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
 reponame="random"
 repo_script_dir="thechosenones"
-bitbucket="$(ssh -o StrictHostKeyChecking=no git@bitbucket.com 2>&1 | grep 'Permission denied (publickey).')" && :
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
 confirm() {
@@ -82,9 +81,10 @@ setup_folders () {
 setup_dotfiles () {
     mkdir -p "$default_gitdir"
     pushd "$default_gitdir"
+    default_ssh_key_path="~/.ssh/id_rsa.pub"
 
-    if [[ -n "$bitbucket" ]]; then
-        echo "Add your ssh keys to bitbucket and github first and then rerun this script with '--dots'"
+    if [[ -n "$github" ]]; then
+        echo "Add your ssh key to github first and then rerun this script with '--dots'"
     else
         if [[ ! -d "dots" ]]; then
             git clone git@github.com:verdude/dots
@@ -97,16 +97,17 @@ setup_dotfiles () {
             echo "Python3 not found."
             return 1
         fi
-        #./link.py -f
-        if [[ -n "$github" ]]; then
-            cat ~/.ssh/id_rsa.pub | xclip -sel clip
-            echo "add key to github (it's in the paste buffer)"
-        else
-            if [[ ! -d ~/bin ]]; then
-                echo "You should run the rest of the setup now"
-                exit
+        # python3 link.py -f
+        if [[ -z "$github" ]]; then
+            if [[ -n $(which xclip) ]] && [[ -f $default_ssh_key_path ]]; then
+                cat $default_ssh_key_path | xclip -sel clip
+                echo "add key to github (it's in the paste buffer)."
+            elif [[ -f $default_ssh_key_path ]]; then
+                echo
+                cat $default_ssh_key_path
+                echo
+                echo "add key to github"
             fi
-            ~/bin/reclone
         fi
     fi
     popd
