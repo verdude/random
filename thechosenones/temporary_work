@@ -1,0 +1,12 @@
+#!/bin/bash
+
+prefix="$HOME/tmpdir"
+fname="$prefix-$(openssl rand -hex 5)"
+mkdir $fname
+
+if [[ -f $1 ]]; then
+  cp $1 $fname
+fi
+
+echo $fname
+
