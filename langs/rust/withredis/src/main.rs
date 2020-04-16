@@ -1,5 +1,5 @@
 use std::process::Command;
-use std::process;
+use std::process::Stdio;
 use std::process::Child;
 use std::env;
 
@@ -14,12 +14,14 @@ fn main() {
     let mut args = env::args().skip(1);
     let command = args.next().expect("no command specified.");
     let args = args.collect::<Vec<String>>();
-    println!("running command: {} {:?}", command, args);
 
     let mut redis_com = Command::new("redis-server");
+    // disable persistence
+    // disable output
     redis_com
-        .stderr(process::Stdio::null())
-        .stdout(process::Stdio::null());
+        .arg("--save")
+        .stdout(Stdio::null())
+        .stderr(Stdio::null());
     let redis = redis_com.spawn();
 
     let mut proc = Command::new(command.clone());
