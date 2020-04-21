@@ -57,15 +57,15 @@ fn main() {
     // limit  is consumed twice as fast using a browser because
     // it makes more requests specifically for favicons
     for stream in listener.incoming() {
-        if limit == 0 {
-            println!("Reached limit.");
-            return;
-        }
         match stream {
             Ok(mut stream) => {
                 handle_client(&string.as_str(), &mut stream);
                 limit -= 1;
                 println!("{}", limit);
+                if limit == 0 {
+                    println!("Reached limit.");
+                    return;
+                }
             },
             Err(e) => println!("error getting client stream: {}", e)
         }
