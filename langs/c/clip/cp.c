@@ -60,14 +60,14 @@ static int new_ipa(char *configline, server_ipa *addr) {
         }
         else {
             temp = strtol(alertp, &invalid_char, 10);
-			if ((errno == ERANGE && (temp == LONG_MAX || temp == LONG_MIN)) || (errno != 0 && temp == 0)) {
-				perror("strtol");
-				return -1;
-			}
-			if (invalid_char == alertp) {
-				return -1;
-			}
-			alert = temp;
+            if ((errno == ERANGE && (temp == LONG_MAX || temp == LONG_MIN)) || (errno != 0 && temp == 0)) {
+                perror("strtol");
+                return -1;
+            }
+            if (invalid_char == alertp) {
+                return -1;
+            }
+            alert = temp;
             memset(&addr->addr, 0, sizeof(struct sockaddr_in));
             addr->addr.sin_family = AF_INET;
             addr->addr.sin_port = htons(PORT);
@@ -109,8 +109,8 @@ int load_ipas(const char* fn, server_ipa *ipas, unsigned int n) {
     while (num_ipas < MAX_IPAS && fgets(line, MAXBUFLEN, f)) {
        if (new_ipa(line, &ipas[num_ipas])) {
            fprintf(stderr, "Error parsing line [%i] in config\n", num_ipas+1);
-            wordfree(&configfilepath);
-            return -1;
+           wordfree(&configfilepath);
+           return -1;
        }
        num_ipas++;
     }

@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 dirs = Dir["#{File.expand_path('~')}/tmpdir-*"]
 
+puts "nothing to be seen" if dirs.count == 0
 puts "Select one plox:"
 puts (dirs.map.with_index do |s, i|
   "#{i}. #{s}"

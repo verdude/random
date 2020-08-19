@@ -1,3 +1,3 @@
-xrandr --newmode "1920x1080"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
-xrandr --addmode Virtual-1 1920x1080
-xrandr --output Virtual-1 --mode 1920x1080
+xrandr --newmode "2560x1440" 241.50 2560 2600 2632 2720 1440 1443 1448 1481 -hsync +vsync
+xrandr --addmode Virtual-0 2560x1440
+xrandr --output Virtual-0 --mode 2560x1440
