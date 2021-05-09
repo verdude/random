@@ -17,7 +17,7 @@ done
 
 if [[ -z "$environment" ]]; then
     echo "creating virtual environment"
-    virtualenv -p ${1:-python3} env
+    python3 -m venv env
     environment="env"
 fi
 
