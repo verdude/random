@@ -13,7 +13,7 @@ class BTnode {
    */
   nthSmallest(n) {
     if (n < 1)
-      throw new Error(`${n} is to small!!!!!`);
+      throw new Error(`${n} is too small!!!!!`);
 
     let nodes = [];
 
