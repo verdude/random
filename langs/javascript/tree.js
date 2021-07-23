@@ -1,7 +1,6 @@
-class BTnode {
-  static order = [];
-  static n = 0;
+const assert = require("assert");
 
+class BTnode {
   constructor(val, left, right) {
     this.val = val;
     this.right = right;
@@ -9,33 +8,34 @@ class BTnode {
   }
 
   /**
-   * Get ascending list of nodes
-   * and return the nth node. (1 based indexing)
-   * 1 being the smallest value.
+   * Build list of n nodes in ascending order,
+   * return final one.
    */
   nthSmallest(n) {
-    if (n < 1) {
+    if (n < 1)
       throw new Error(`${n} is to small!!!!!`);
+
+    let nodes = [];
+
+    function orderNodes(node) {
+      if (node.left)
+        orderNodes(node.left);
+
+      if (nodes.length === n)
+        return;
+
+      nodes.push(node);
+
+      if (node.right)
+        orderNodes(node.right);
     }
 
-    // clear static nodes
-    BTnode.order = [];
-    BTnode.n = n;
-    this.ascending();
-    return BTnode.order[n-1]
-  }
+    orderNodes(this);
 
-  ascending() {
-    if (BTnode.order.length === BTnode.n)
-      return;
+    if (nodes.length < n)
+      throw new Error(`Cannot find ${n}th/rd/st/nd node. There are only ${nodes.length} in the tree.`);
 
-    if (this.left)
-      this.left.ascending();
-
-    BTnode.order.push(this);
-
-    if (this.right)
-      this.right.ascending();
+    return nodes.pop();
   }
 }
 
@@ -57,13 +57,6 @@ class BTnode {
  */
 const tree = new BTnode(10, new BTnode(9, new BTnode(8, new BTnode(7, new BTnode(3, null, new BTnode(5, new BTnode(4)))))));
 
-function assert(success, test) {
-  if (success) return;
-  console.log(`Failed on `, test);
-  console.log(BTnode.order);
-  throw new Error(`failed on ${test}`);
-}
-
 [
   [1, 3],
   [2, 4],
@@ -74,7 +67,12 @@ function assert(success, test) {
   [7, 10],
 ].map(pair => {
   const [n, v] = pair;
-  assert(tree.nthSmallest(n).val === v, n);
+  const val = tree.nthSmallest(n).val;
+  console.log("Testing", pair, "received", val);
+  assert(val === v);
 });
+
+assert.throws(tree.nthSmallest.bind(tree, 100), Error);
+assert.throws(tree.nthSmallest.bind(tree, 0), Error);
 
 console.log("success");
