@@ -9,7 +9,7 @@ class BTnode {
   }
 
   /**
-   * Get the n nodes from ordered tree as a list
+   * Get ascending list of nodes
    * and return the nth node. (1 based indexing)
    * 1 being the smallest value.
    */
