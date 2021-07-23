@@ -66,10 +66,10 @@ const tree = new BTnode(10, new BTnode(9, new BTnode(8, new BTnode(7, new BTnode
   [6, 9],
   [7, 10],
 ].map(pair => {
-  const [n, v] = pair;
-  const val = tree.nthSmallest(n).val;
+  const [nth, expected] = pair;
+  const val = tree.nthSmallest(nth).val;
   console.log("Testing", pair, "received", val);
-  assert(val === v);
+  assert(val === expected);
 });
 
 assert.throws(tree.nthSmallest.bind(tree, 100), Error);
