@@ -9,7 +9,7 @@ fi
 generate() {
     # generates ssh keys
     echo "Make sure to name the key pair 'id_rsa'"
-    ssh-keygen -t rsa -b 4096 -C $EMAIL
+    ssh-keygen -t ed25519 -C $EMAIL
     ssh_agent=`eval "$(ssh-agent -s)"`
     if [[ ! -z ssh_agent ]]; then
         ssh-add ~/.ssh/id_rsa
