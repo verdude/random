@@ -3,7 +3,6 @@ use std::collections::HashMap;
 
 use hyper::body;
 use hyper::{Method, Response, Request, Body, Client};
-use hyper_tls::{HttpsConnector};
 
 #[derive(Debug)]
 struct Sextets {
@@ -139,23 +138,21 @@ async fn main() {
         return;
     }
 
-    let e_msg = |x: &str| format!("{} not found", x);
-
     let key = match env::var(key_var) {
         Ok(val) => val,
-        Err(_) => panic!(e_msg(key_var))
+        Err(_) => panic!("Failed to get key value.")
     };
     let token = match env::var(token_var) {
         Ok(val) => val,
-        Err(_) => panic!(e_msg(token_var))
+        Err(_) => panic!("Failed to get token value.")
     };
     let from = match env::var(from_var) {
         Ok(val) => val,
-        Err(_) => panic!(e_msg(from_var))
+        Err(_) => panic!("Failed to get from value.")
     };
     let to = match env::var(to_var) {
         Ok(val) => val,
-        Err(_) => panic!(e_msg(to_var))
+        Err(_) => panic!("Failed to get to value.")
     };
 
     let mut auth_enc: String = String::new();
@@ -175,8 +172,7 @@ async fn main() {
 
 
     let uri = format!("https://api.twilio.com/2010-04-01/Accounts/{}/Messages.json", key);
-    let https = HttpsConnector::new();
-    let client = Client::builder().build::<_, Body>(https);
+    let client = Client::new();
     let builder = Request::builder()
         .method(Method::POST)
         .uri(uri)
