@@ -1,5 +1,7 @@
 # Security Policy
 
-ur code is insecure! :gasp:
+### ur code is insecure! :gasp:
 
-<info here pls>
+- [^1]
+
+[^1]: info here pls
