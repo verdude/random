@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
-from twilio.rest import TwilioRestClient
+from twilio.rest import Client
 import argparse
 import logging
 import json
@@ -30,13 +30,14 @@ class Texter():
             self.config = read_from_file(config_path + "/.texterrc")
         else:
             self.config = load_from_env()
-        self.tc = TwilioRestClient(str(self.config["account_sid"]),str(self.config["auth_token"]))
+        self.tc = Client(str(self.config["account_sid"]),str(self.config["auth_token"]))
 
     def send(self, number, message):
         number = number or self.config["to_num"]
         logging.info("seding message to: %s", str(number))
         logging.info("Sending message: %s", message)
-        self.tc.messages.create(body=message, to=str(number), from_=str(self.config["from_num"]))
+        resp = self.tc.messages.create(body=message, to=str(number), from_=str(self.config["from_num"]))
+        print(resp.sid)
 
 def parse_options():
     parser = argparse.ArgumentParser(prog="updates", description="Send Text", add_help=True)
