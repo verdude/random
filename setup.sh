@@ -66,13 +66,13 @@ setup_tmux() {
 }
 
 setup_folders () {
-    mkdir -p ~/bin ~/dls
+    mkdir -p ~/bin ~/dls ~/bits
     if [[ $(uname) = "Darwin" ]]; then
         echo "Skipping removing folders because macOS"
         return
     fi
     for x in $(ls ~ | grep "^[A-Z]"); do
-        if [[ "$x" != "git" ]] && [[ "$x" != "dls" ]] && [[ "$x" != "bin" ]] ; then
+        if [[ "$x" != "git" ]] && [[ "$x" != "dls" ]] && [[ "$x" != "bin" ]] && [[ "$x" != "bits" ]]; then
             rm -ri ~/$x
         fi
     done
