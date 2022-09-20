@@ -1,19 +1,18 @@
 use argparse::{ArgumentParser, Store};
+use scraper::{Html, Selector};
 use std::fs;
 use std::io;
 
 fn read_file(filename: &str) -> String {
-    println!("filename {}", filename);
-    let contents: String = fs::read_to_string(filename)
+    return fs::read_to_string(filename)
         .expect(&format!("Failed to read file {}", filename));
-    return contents;
 }
 
 fn read_stdin() -> String {
     let lines = io::stdin().lines();
     let mut content = String::new();
     for line in lines {
-        let line: String = line.unwrap();
+        let line = line.unwrap();
         if line != "" {
             content.push_str(&line);
             content.push('\n');
@@ -22,7 +21,11 @@ fn read_stdin() -> String {
     return content;
 }
 
-fn get_text() -> String {
+fn get_text(contents: String) -> Vec<&str> {
+    let doc = Html::parse_document(&contents);
+    let selector = Selector::parse("*").unwrap();
+    let body = doc.select(&selector).next().unwrap();
+    body.text().collect::<Vec<_>>()
 }
 
 fn main() {
@@ -36,10 +39,14 @@ fn main() {
         ap.parse_args_or_exit();
     }
 
-    let contents: String;
-    if file == "-" {
-        contents = read_stdin();
-    } else {
-        contents = read_file(&file);
+    let contents = if file == "-" { read_stdin() } else { read_file(&file) };
+    let text: Vec<String> = get_text(contents);
+    let lines = text.iter().map(|s|s.replace("\n", ""));
+    let mut vec = Vec::new();
+    for line in lines {
+        if line != "" {
+            vec.push(line);
+        }
     }
+    println!("{}", vec.join("\n"));
 }
