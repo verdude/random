@@ -95,7 +95,7 @@ setup_dotfiles () {
   default_ssh_key_path="~/.ssh/id_rsa.pub"
 
   if [[ -n "$github" ]]; then
-    echo "Add your ssh key to github first and then rerun this script with '--dots'"
+    echo "Add your ssh key to github first and then rerun this script with '-d'"
   else
     if [[ ! -d "dots" ]]; then
       git clone git@github.com:verdude/dots
@@ -154,7 +154,17 @@ setup_gitdir() {
   fi
 }
 
+server_setup() {
+  [[ -n "$dry_run" ]] && echo "setup server" && return
+  sudo apt update
+  sudo apt install git vim tmux ufw python3
+}
+
 opts "$@"
+
+if [[ -n "$server_setup" ]]; then
+  setup_server
+fi
 
 if [[ -n "$dots_only" ]]; then
   setup_dotfiles
@@ -169,9 +179,5 @@ setup_folders
 setup_vim
 setup_tmux
 setup_dotfiles
-
-if [[ -n "$server_setup" ]]; then
-  setup_server
-fi
 
 echo "done"
