@@ -154,7 +154,7 @@ setup_gitdir() {
   fi
 }
 
-server_setup() {
+setup_server() {
   [[ -n "$dry_run" ]] && echo "setup server" && return
   sudo apt update
   sudo apt install git vim tmux ufw python3
