@@ -14,9 +14,9 @@ function log() {
 
 while
   log
-  read -rn 1 -i n -p "continue? (Y/n): " resp
+  read -rn 1 -i n -p "continue? (Y/q): " resp
 
-  if [[ "$resp" == "n" ]]; then
+  if [[ "$resp" == "q" ]]; then
     echo
     echo good day.
     break
