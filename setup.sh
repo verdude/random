@@ -108,7 +108,7 @@ setup_dotfiles () {
       echo "Python3 not found."
       return 1
     fi
-    # python3 link.py -f
+    python3 link.py -f
     if [[ -z "$github" ]]; then
       if [[ -n $(which xclip) ]] && [[ -f $default_ssh_key_path ]]; then
         cat $default_ssh_key_path | xclip -sel clip
@@ -157,7 +157,7 @@ setup_gitdir() {
 setup_server() {
   [[ -n "$dry_run" ]] && echo "setup server" && return
   sudo apt update
-  sudo apt install git vim tmux ufw python3
+  sudo apt install -y git vim tmux ufw python3
 }
 
 opts "$@"
