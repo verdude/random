@@ -3,23 +3,32 @@
 set -ueo pipefail
 
 dry_run=""
-dots_only=""
-server_setup=""
+username=""
+single_command=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
 reponame="random"
 repo_script_dir="thechosenones"
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
-opts () {
-  while getopts Dds flag
+opts() {
+  while getopts xDdsu: flag
   do
     case ${flag} in
-      d) dots_only="true";;
-      s) server_setup="true";;
+      x) single_command="true";;
+      d) setup_dotfiles && die;;
+      s) setup_server && die;;
       D) dry_run="true";;
+      u) username="${OPTARG}"; new_user && die;;
     esac
   done
+}
+
+die() {
+  if [[ -n "$single_command" ]]; then
+    echo "Reached stopping point."
+    exit 0
+  fi
 }
 
 confirm() {
@@ -156,20 +165,34 @@ setup_gitdir() {
 
 setup_server() {
   [[ -n "$dry_run" ]] && echo "setup server" && return
+  if [[ -z "$(which apt)" ]]; then
+    echo "could not find supported package manager."
+    return 1
+  fi
   sudo apt update
-  sudo apt install -y git vim tmux ufw python3
+  sudo apt install -y git vim tmux ufw python3 fail2ban
+  sudo chsh -s /bin/nologin root
+  sudo ufw allow 22
+  sudo ufw enable
+  cat << EOF > /etc/fail2ban/jail.local
+[sshd]
+enabled = true
+port = ssh
+filter = sshd
+logpath = /var/log/auth.log
+findtime = 10
+maxretry = 0
+bantime = -1
+ignoreip = $(w -h | head -1 | awk '{print $3}') 127.0.0.1
+EOF
+}
+
+new_user() {
+  [[ -n "$dry_run" ]] && echo "create user" && return
+  ~/bin/new_user -u $username
 }
 
 opts "$@"
-
-if [[ -n "$server_setup" ]]; then
-  setup_server
-fi
-
-if [[ -n "$dots_only" ]]; then
-  setup_dotfiles
-  exit
-fi
 
 setup_gitdir
 setup
