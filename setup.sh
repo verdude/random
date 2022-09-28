@@ -194,7 +194,7 @@ EOF
 
 new_user() {
   [[ -n "$dry_run" ]] && echo "create user" && return
-  ./thechosenones/new_user -u $username
+  ${scriptpath}/${repo_script_dir}/new_user.sh -u $username
 }
 
 opts "$@"
