@@ -9,6 +9,7 @@ function next() {
 
 function log() {
     git diff $cc^ $cc -- $args
+    echo $cc $(git show --pretty=format:"%B" --no-patch $cc)
     next
 }
 
