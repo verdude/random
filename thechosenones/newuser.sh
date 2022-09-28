@@ -7,19 +7,17 @@ if [[ $UID -eq 0 ]]; then
   exit 1
 fi
 
-while getopts u:x flag
-do
-  case ${flag} in
-    u) create_user ${OPTARG};;
-    x) block_user;;
-  esac
-done
-
 function create_user() {
   username="$1"
 
   if [[ -z "$username" ]]; then
     echo "-u username # required"
+    return 1
+  fi
+
+  (id -u $username &>/dev/null)
+  if [[ $? -eq 0 ]]; then
+    echo User $username already exists.
     return 1
   fi
 
@@ -42,3 +40,11 @@ function block_user() {
   sudo chsh -s /usr/bin/false $(whoami)
   # TODO: block in ssh
 }
+
+while getopts u:x flag
+do
+  case ${flag} in
+    u) create_user ${OPTARG};;
+    x) block_user;;
+  esac
+done
