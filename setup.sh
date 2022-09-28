@@ -176,7 +176,7 @@ setup_server() {
   fi
   sudo apt update
   sudo apt install -y git vim tmux ufw python3 fail2ban
-  sudo chsh -s $(which false) root
+  sudo chsh -s $(which nologin) root
   sudo ufw allow 22
   sudo ufw enable
   cat << EOF | sudo tee /etc/fail2ban/jail.local
