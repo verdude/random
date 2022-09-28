@@ -2,6 +2,11 @@
 
 set -ueo pipefail
 
+if [ $UID -eq 0 ]; then
+  echo "no sudo pls"
+  exit 1
+fi
+
 dry_run=""
 username=""
 single_command=""
@@ -174,7 +179,7 @@ setup_server() {
   sudo chsh -s /bin/nologin root
   sudo ufw allow 22
   sudo ufw enable
-  cat << EOF > /etc/fail2ban/jail.local
+  cat << EOF | sudo tee /etc/fail2ban/jail.local
 [sshd]
 enabled = true
 port = ssh
@@ -189,7 +194,7 @@ EOF
 
 new_user() {
   [[ -n "$dry_run" ]] && echo "create user" && return
-  ~/bin/new_user -u $username
+  ./thechosenones/new_user -u $username
 }
 
 opts "$@"
