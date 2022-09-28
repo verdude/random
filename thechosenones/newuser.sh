@@ -7,37 +7,38 @@ if [[ $UID -eq 0 ]]; then
   exit 1
 fi
 
-username=""
-block_current_user=""
-
 while getopts u:x flag
 do
   case ${flag} in
-    u) username=${OPTARG};;
-    x) block_current_user="true";;
+    u) create_user ${OPTARG};;
+    x) block_user;;
   esac
 done
 
-if [[ -z "$username" ]]; then
-  echo "-u username # required"
-  exit 1
-fi
+function create_user() {
+  username="$1"
 
-echo "Creating user: $username"
-sudo useradd -m $username
-echo "Set $username password"
-sudo passwd $username
-echo "Change shell for $username"
-sudo chsh -s /bin/bash $username
-sudo mkdir /home/$username/.ssh
+  if [[ -z "$username" ]]; then
+    echo "-u username # required"
+    return 1
+  fi
 
-if [[ -f ~/.ssh/authorized_keys ]]; then
-  sudo cp ~/.ssh/authorized_keys /home/$username/.ssh
-fi
+  echo "Creating user: $username"
+  sudo useradd -m $username
+  echo "Set $username password"
+  sudo passwd $username
+  echo "Change shell for $username"
+  sudo chsh -s /bin/bash $username
+  sudo mkdir /home/$username/.ssh
 
-sudo chown -R $username:$username /home/$username/.ssh
+  if [[ -f ~/.ssh/authorized_keys ]]; then
+    sudo cp ~/.ssh/authorized_keys /home/$username/.ssh
+  fi
 
-if [[ -n "$block_current_user" ]]; then
+  sudo chown -R $username:$username /home/$username/.ssh
+}
+
+function block_user() {
   sudo chsh -s /usr/bin/false $(whoami)
   # TODO: block in ssh
-fi
+}

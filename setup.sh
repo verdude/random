@@ -21,10 +21,10 @@ opts() {
   do
     case ${flag} in
       x) single_command="true";;
-      d) setup_dotfiles && die;;
-      s) setup_server && die;;
+      d) setup_dotfiles; die;;
+      s) setup_server; die;;
       D) dry_run="true";;
-      u) username="${OPTARG}"; new_user && die;;
+      u) username="${OPTARG}"; new_user; die;;
     esac
   done
 }
@@ -170,9 +170,9 @@ setup_gitdir() {
 
 setup_server() {
   [[ -n "$dry_run" ]] && echo "setup server" && return
-  if [[ -z "$(which apt)" ]]; then
+  if [[ -z "$(which apt 2>/dev/null)" ]]; then
     echo "could not find supported package manager."
-    return 1
+    return
   fi
   sudo apt update
   sudo apt install -y git vim tmux ufw python3 fail2ban
