@@ -170,7 +170,7 @@ setup_gitdir() {
 
 setup_server() {
   [[ -n "$dry_run" ]] && echo "setup server" && return
-  if which apt &>/dev/null; then
+  if ! which apt &>/dev/null; then
     echo "could not find supported package manager."
     return
   fi
