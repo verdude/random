@@ -10,6 +10,9 @@ fi
 dry_run=""
 username=""
 single_command=""
+dots_only=""
+server_setup=""
+switch=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
 reponame="random"
@@ -17,14 +20,16 @@ repo_script_dir="thechosenones"
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
 opts() {
-  while getopts xDdsu: flag
+  while getopts xDdsbU:u: flag
   do
     case ${flag} in
       x) single_command="true";;
-      d) setup_dotfiles; die;;
-      s) setup_server; die;;
+      d) dots_only="true";;
       D) dry_run="true";;
-      u) username="${OPTARG}"; new_user; die;;
+      s) server_setup="true";;
+      u) username="${OPTARG}";;
+      U) switch="true"; username="${OPTARG}";;
+      b) blockcurrent="-x";;
     esac
   done
 }
@@ -192,15 +197,25 @@ ignoreip = $(w -h | head -1 | awk '{print $3}') 127.0.0.1
 EOF
   sudo systemctl enable fail2ban
   sudo systemctl restart fail2ban
+  die
 }
 
-new_user() {
+setup_user() {
+  [[ -z "username" ]] && return
   [[ -n "$dry_run" ]] && echo "create user" && return
-  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username
+  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent
+
+  if [[ -n "$switch" ]]; then
+    sudo su $username
+  fi
+
+  die
 }
 
 opts "$@"
 
+setup_user
+setup_server
 setup_gitdir
 setup
 add_scripts
