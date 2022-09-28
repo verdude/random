@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ueo pipefail
+set -xeo pipefail
 
 if [[ $UID -eq 0 ]]; then
   echo "no sudo pls"
@@ -201,7 +201,7 @@ EOF
 }
 
 setup_user() {
-  [[ -z "username" ]] && return
+  [[ -z "$username" ]] && return
   [[ -n "$dry_run" ]] && echo "create user" && return
   ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent
 
