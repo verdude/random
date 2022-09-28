@@ -206,8 +206,15 @@ setup_user() {
   ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent
 
   if [[ -n "$switch" ]]; then
-    sudo su $username
-    whoami
+    _name="$NAME"
+    _email="$EMAIL"
+    sudo su - $username <<CMD
+cd
+git clone git@github.com:verdude/random
+export NAME=$_name
+export EMAIL=$_email
+random/setup.sh
+CMD
   fi
 
   die
@@ -216,11 +223,6 @@ setup_user() {
 opts "$@"
 
 setup_user
-whoami
-whoami
-whoami
-whoami
-whoami
 setup_server
 setup_gitdir
 setup
