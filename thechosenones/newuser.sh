@@ -36,6 +36,7 @@ function create_user() {
 }
 
 function block_user() {
+  echo "Disabling $(whoami)"
   sudo chsh -s $(which false) $(whoami)
   # TODO: block in ssh
 }

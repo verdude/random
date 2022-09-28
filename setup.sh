@@ -207,6 +207,7 @@ setup_user() {
 
   if [[ -n "$switch" ]]; then
     sudo su $username
+    whoami
   fi
 
   die
@@ -215,6 +216,11 @@ setup_user() {
 opts "$@"
 
 setup_user
+whoami
+whoami
+whoami
+whoami
+whoami
 setup_server
 setup_gitdir
 setup
