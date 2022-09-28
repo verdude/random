@@ -15,8 +15,7 @@ function create_user() {
     return 1
   fi
 
-  (id -u $username &>/dev/null)
-  if [[ $? -eq 0 ]]; then
+  if id -u $username &>/dev/null; then
     echo User $username already exists.
     return 1
   fi
