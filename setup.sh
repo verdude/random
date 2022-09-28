@@ -12,7 +12,6 @@ username=""
 single_command=""
 dots_only=""
 server_setup=""
-switch=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
 reponame="random"
@@ -28,7 +27,6 @@ opts() {
       D) dry_run="true";;
       s) server_setup="true";;
       u) username="${OPTARG}";;
-      U) switch="true"; username="${OPTARG}";;
       b) blockcurrent="-x";;
     esac
   done
@@ -204,18 +202,6 @@ setup_user() {
   [[ -z "$username" ]] && return
   [[ -n "$dry_run" ]] && echo "create user" && return
   ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent
-
-  if [[ -n "$switch" ]]; then
-    _name="$NAME"
-    _email="$EMAIL"
-    sudo su - $username <<CMD
-cd
-git clone git@github.com:verdude/random
-export NAME=$_name
-export EMAIL=$_email
-random/setup.sh
-CMD
-  fi
 
   die
 }
