@@ -176,7 +176,7 @@ setup_server() {
   fi
   sudo apt update
   sudo apt install -y git vim tmux ufw python3 fail2ban
-  sudo chsh -s /bin/nologin root
+  sudo chsh -s /bin/false root
   sudo ufw allow 22
   sudo ufw enable
   cat << EOF | sudo tee /etc/fail2ban/jail.local
@@ -194,7 +194,7 @@ EOF
 
 new_user() {
   [[ -n "$dry_run" ]] && echo "create user" && return
-  ${scriptpath}/${repo_script_dir}/new_user.sh -u $username
+  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username
 }
 
 opts "$@"
