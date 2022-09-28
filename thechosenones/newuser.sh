@@ -25,7 +25,7 @@ function create_user() {
   echo "Set $username password"
   sudo passwd $username
   echo "Change shell for $username"
-  sudo chsh -s /bin/bash $username
+  sudo chsh -s $(which bash) $username
   sudo mkdir /home/$username/.ssh
 
   if [[ -f ~/.ssh/authorized_keys ]]; then
