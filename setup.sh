@@ -2,7 +2,7 @@
 
 set -ueo pipefail
 
-if [ $UID -eq 0 ]; then
+if [[ $UID -eq 0 ]]; then
   echo "no sudo pls"
   exit 1
 fi
@@ -190,6 +190,8 @@ maxretry = 0
 bantime = -1
 ignoreip = $(w -h | head -1 | awk '{print $3}') 127.0.0.1
 EOF
+  sudo systemctl enable fail2ban
+  sudo systemctl restart fail2ban
 }
 
 new_user() {
