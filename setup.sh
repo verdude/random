@@ -29,7 +29,7 @@ opts() {
       s) server_setup="true";;
       u) username="${OPTARG}";;
       b) blockcurrent="-x";;
-      b) deleteself="true";;
+      z) deleteself="true";;
     esac
   done
 }
