@@ -184,6 +184,12 @@ setup_server() {
   fi
   sudo apt update
   sudo apt install -y git vim tmux ufw python3 fail2ban
+
+  if [[ -f /etc/pam.d/chsh ]]; then
+    echo "chsh -> sufficient"
+    sudo sed -Ei 's/required(\s*pam_shells.so)/sufficient\1/' /etc/pam.d/chsh
+  fi
+
   sudo chsh -s $(which nologin) root
   sudo ufw allow 22
   sudo ufw enable
@@ -198,10 +204,6 @@ maxretry = 0
 bantime = -1
 ignoreip = $(w -h | head -1 | awk '{print $3}') 127.0.0.1
 EOF
-  if [[ -f /etc/pam.d/chsh ]]; then
-    echo "chsh -> sufficient"
-    sudo sed -Ei 's/required(\s*pam_shells.so)/sufficient\1/' /etc/pam.d/chsh
-  fi
   sudo systemctl enable fail2ban
   sudo systemctl restart fail2ban
   die
