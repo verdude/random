@@ -7,12 +7,13 @@ if [[ $UID -eq 0 ]]; then
   exit 1
 fi
 
+groups=""
 dry_run=""
 username=""
-single_command=""
 dots_only=""
-server_setup=""
 deleteself=""
+server_setup=""
+single_command=""
 exit_after_server_setup=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
@@ -21,7 +22,7 @@ repo_script_dir="thechosenones"
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
 opts() {
-  while getopts crzxDdsbU:u: flag
+  while getopts zxDdsbu:r: flag
   do
     case ${flag} in
       x) single_command="true";;
@@ -30,7 +31,7 @@ opts() {
       s) server_setup="true";;
       u) username="${OPTARG}";;
       b) blockcurrent="-x";;
-      r) rootuser="-r";;
+      g) groups="-g ${OPTARG}";;
       z) deleteself="true";;
       e) exit_after_server_setup="true";;
     esac
@@ -215,7 +216,7 @@ EOF
 setup_user() {
   [[ -z "$username" ]] && return
   [[ -n "$dry_run" ]] && echo "create user" && return
-  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent $rootuser
+  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent $groups
 
   die
 }
