@@ -4,9 +4,7 @@ set -euo pipefail
 
 scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
 
-if [[ ! -d ~/bin ]]; then
-  mkdir ~/bin
-fi
+mkdir -p ~/bin
 
 pushd () {
   command pushd "$@" > /dev/null
@@ -18,11 +16,11 @@ popd () {
 
 scripts_dirname="thechosenones"
 
-get_clip () {
+get_clip() {
   make -C $(find $scriptpath -name clip -type d) install
 }
 
-check_for_script_folder () {
+check_for_script_folder() {
   if [[ ! -d "$scripts_dirname" ]]; then
       dir=$(find ${GITDIR:-.} -name "$scripts_dirname" -maxdepth 2 -type d -quit)
     if [[ -z "$dir" ]]; then
@@ -34,7 +32,7 @@ check_for_script_folder () {
   echo "Found $scripts_dirname directory"
 }
 
-link_files () {
+link_files() {
   rel=~/bin/
   for file in $(ls $1); do
     printf .
@@ -46,7 +44,7 @@ link_files () {
   echo "scripts added."
 }
 
-main () {
+main() {
   scriptpath="$( cd "$(dirname "$0")" ; pwd -P )"
   cd $scriptpath
 
