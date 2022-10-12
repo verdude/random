@@ -223,8 +223,8 @@ delete_self() {
 
 opts "$@"
 
-setup_user
 setup_server
+setup_user
 setup_gitdir
 setup
 add_scripts
