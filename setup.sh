@@ -200,7 +200,7 @@ ignoreip = $(w -h | head -1 | awk '{print $3}') 127.0.0.1
 EOF
   if [[ -f /etc/pam.d/chsh ]]; then
     echo "chsh -> sufficient"
-    sudo sed -Ei 's/required(\w*pam_shells.so)/sufficient\1/' /etc/pam.d/chsh
+    sudo sed -Ei 's/required(\s*pam_shells.so)/sufficient\1/' /etc/pam.d/chsh
   fi
   sudo systemctl enable fail2ban
   sudo systemctl restart fail2ban
