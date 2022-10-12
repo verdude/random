@@ -22,7 +22,7 @@ repo_script_dir="thechosenones"
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
 opts() {
-  while getopts zxDdsbu:r: flag
+  while getopts ezxDdsbu:r: flag
   do
     case ${flag} in
       x) single_command="true";;
