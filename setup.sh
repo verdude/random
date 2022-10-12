@@ -12,6 +12,7 @@ username=""
 single_command=""
 dots_only=""
 server_setup=""
+deleteself=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
 reponame="random"
@@ -19,7 +20,7 @@ repo_script_dir="thechosenones"
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
 opts() {
-  while getopts xDdsbU:u: flag
+  while getopts zxDdsbU:u: flag
   do
     case ${flag} in
       x) single_command="true";;
@@ -28,6 +29,7 @@ opts() {
       s) server_setup="true";;
       u) username="${OPTARG}";;
       b) blockcurrent="-x";;
+      b) deleteself="true";;
     esac
   done
 }
@@ -213,6 +215,12 @@ setup_user() {
   die
 }
 
+delete_self() {
+  [[ -z "$deleteself" ]] && return
+  [[ -n "$dry_run" ]] && echo "delete_self" && return
+  rm -rf ${scriptpath}
+}
+
 opts "$@"
 
 setup_user
@@ -225,5 +233,6 @@ setup_folders
 setup_vim
 setup_tmux
 setup_dotfiles
+delete_self
 
 echo "done"
