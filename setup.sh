@@ -13,6 +13,7 @@ single_command=""
 dots_only=""
 server_setup=""
 deleteself=""
+exit_after_server_setup=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
 reponame="random"
@@ -30,6 +31,7 @@ opts() {
       u) username="${OPTARG}";;
       b) blockcurrent="-x";;
       z) deleteself="true";;
+      e) exit_after_server_setup="true";;
     esac
   done
 }
@@ -227,6 +229,9 @@ opts "$@"
 
 setup_server
 setup_user
+
+[[ -n "$exit_after_server_setup" ]] && echo "skipping non server setup" && exit 0
+
 setup_gitdir
 setup
 add_scripts
