@@ -230,7 +230,7 @@ setup_user
 setup_gitdir
 setup
 add_scripts
-setup_git
+setup_git||:
 setup_folders
 setup_vim
 setup_tmux
