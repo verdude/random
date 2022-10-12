@@ -13,8 +13,6 @@ single_command=""
 dots_only=""
 server_setup=""
 deleteself=""
-changeuser=""
-createuser=""
 exit_after_server_setup=""
 default_gitdir=${GITDIR:-~/git}
 scriptpath="$(cd "$(dirname "$0")"; pwd -P)"
@@ -32,10 +30,9 @@ opts() {
       s) server_setup="true";;
       u) username="${OPTARG}";;
       b) blockcurrent="-x";;
+      r) rootuser="-r";;
       z) deleteself="true";;
       e) exit_after_server_setup="true";;
-      c) changeuser="true";;
-      r) createuser="true";;
     esac
   done
 }
@@ -216,21 +213,9 @@ EOF
 }
 
 setup_user() {
-  [[ -z "$createuser" ]] && return
-  [[ -z "$username" ]] && echo "Missing username for user setup" && return
+  [[ -z "$username" ]] && return
   [[ -n "$dry_run" ]] && echo "create user" && return
-  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent
-
-  die
-}
-
-change_user() {
-  [[ -z "$changeuser" ]] && return
-  [[ -z "$username" ]] && echo "Missing username for user modifications" && return
-  [[ -n "$dry_run" ]] && echo "change_user" && return
-  curr_login=$(whoami)
-  sudo usermod -l $username $curr_login
-  sudo usermod -d /home/$curr_login -m /home/$username $curr_login
+  ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent $rootuser
 
   die
 }
@@ -247,7 +232,6 @@ opts "$@"
 
 setup_server
 setup_user
-change_user
 
 [[ -n "$exit_after_server_setup" ]] && echo "skipping non server setup" && exit 0
 

@@ -2,14 +2,16 @@
 
 set -euo pipefail
 
+groups=""
+block=""
+username=""
+
 if [[ $UID -eq 0 ]]; then
   echo "no sudo pls"
   exit 1
 fi
 
 function create_user() {
-  username="$1"
-
   if [[ -z "$username" ]]; then
     echo "-u username # required"
     return 1
@@ -36,15 +38,32 @@ function create_user() {
 }
 
 function block_user() {
+  if ! id -u $username &>/dev/null; then
+    echo "User $username does not exist, cannot add groups."
+    return 1
+  fi
   echo "Disabling $(whoami)"
   sudo chsh -s $(which false) $(whoami)
   # TODO: block in ssh
 }
 
-while getopts u:x flag
+function add_groups() {
+  if ! id -u $username &>/dev/null; then
+    echo "User $username does not exist, cannot add groups."
+    return 1
+  fi
+  sudo usermod -aG $groups $username
+}
+
+while getopts g:u:x flag
 do
   case ${flag} in
-    u) create_user ${OPTARG};;
-    x) block_user;;
+    u) username="${OPTARG}";;
+    g) groups="${OPTARG}"
+    x) block=true;;
   esac
 done
+
+create_user
+block_user
+add_group
