@@ -43,7 +43,7 @@ function block_user() {
     return 1
   fi
   echo "Disabling $(whoami)"
-  sudo chsh -s $(which false) $(whoami)
+  sudo chsh -s $(which nologin) $(whoami)
   # TODO: block in ssh
 }
 
