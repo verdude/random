@@ -59,7 +59,7 @@ while getopts g:u:x flag
 do
   case ${flag} in
     u) username="${OPTARG}";;
-    g) groups="${OPTARG}"
+    g) groups="${OPTARG}";;
     x) block=true;;
   esac
 done
