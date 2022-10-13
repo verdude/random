@@ -78,13 +78,13 @@ setup_vim () {
   if [[ -d ~/.local/share/fonts ]]; then
     echo "Skipping font install."
   else
-    git clone https://github.com/powerline/fonts; cd fonts; ./install.sh; cd ../; rm -rf fonts
+    git clone --depth=1 https://github.com/powerline/fonts; cd fonts; ./install.sh; cd ../; rm -rf fonts
     # vim -c "PluginInstall|qa"
   fi
   if [[ -d ~/.vim/bundle/Vundle.vim ]]; then
     echo "Skipping Vundle install"
   else
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
   fi
 }
 
@@ -93,7 +93,7 @@ setup_tmux() {
   if [[ -d ~/.tmux/plugins/tpm ]]; then
     echo "tmux tpm already installed."
   else
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
 }
 
@@ -121,7 +121,7 @@ setup_dotfiles () {
     echo "Add your ssh key to github first and then rerun this script with '-d'"
   else
     if [[ ! -d "dots" ]]; then
-      git clone git@github.com:verdude/dots
+      git clone --depth=1 git@github.com:verdude/dots
       cd dots
     else
       cd dots
@@ -163,7 +163,7 @@ setup () {
       url="https://github.com/verdude/$reponame"
     fi
     # TODO prompt user for a different reponame if they so desire
-    git clone "$url"
+    git clone --depth=1 "$url"
   fi
   cd "$reponame"
 }
