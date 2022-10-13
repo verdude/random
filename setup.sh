@@ -234,7 +234,11 @@ opts "$@"
 setup_server
 setup_user
 
-[[ -n "$exit_after_server_setup" ]] && echo "skipping non server setup" && exit 0
+if [[ -n "$exit_after_server_setup" ]]; then
+  echo "skipping non server setup"
+  delete_self
+  exit 0
+fi
 
 setup_gitdir
 setup
