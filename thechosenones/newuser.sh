@@ -66,4 +66,4 @@ done
 
 create_user
 block_user
-add_group
+add_groups
