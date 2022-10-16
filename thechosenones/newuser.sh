@@ -38,6 +38,7 @@ function create_user() {
 }
 
 function block_user() {
+  [[ -z "$block" ]] && return
   if ! id -u $username &>/dev/null; then
     echo "User $username does not exist, cannot add groups."
     return 1
