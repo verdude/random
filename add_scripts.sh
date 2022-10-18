@@ -37,7 +37,7 @@ link_files() {
   for file in $(ls $1); do
     printf .
     fname="$(readlink -f $scripts_dirname/$file)"
-    linkname=$(echo $file | sed -E 's/^(\w*|\-*)\.\w*$/\1/')
+    linkname=$(echo $file | sed -E 's/^([^\.]*).*/\1/')
     ln -s -f "$fname" "$rel$linkname" 2>/dev/null
   done
   echo
