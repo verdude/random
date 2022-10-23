@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 got_git=$(which git)
 if [ -z $got_git ]; then

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 filepath="$DOTDIR/"
 filename=.repos.txt

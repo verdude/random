@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl software-properties-common
 

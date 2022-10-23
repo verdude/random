@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 peda () {
     mkdir -p ~/github && cd github

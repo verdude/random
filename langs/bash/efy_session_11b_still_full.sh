@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 filename=/tmp/efy_$(date +%m%d_%H-%M.html)
 curl -sSL https://efy.byu.edu/efy_session/10087614 | grep "<" > $filename

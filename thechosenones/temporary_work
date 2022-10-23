@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 prefix="$HOME/tmpdir"
 fname="$prefix-$(openssl rand -hex 5)"

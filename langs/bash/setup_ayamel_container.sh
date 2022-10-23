@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd ~
 mkdir -p Documents/Docker/ && cd Documents/Docker

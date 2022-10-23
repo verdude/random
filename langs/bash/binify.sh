@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [[ $# -gt 3 ]] || [[ $# -le 0 ]]; then
     echo "Illegal number of parameters"

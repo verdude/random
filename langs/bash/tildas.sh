@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 haves_tilda=$(which tilda)
 if [[ -z haves_tilda ]]; then

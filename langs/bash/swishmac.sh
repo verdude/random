@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo ifconfig $1 down
 sudo macchanger -r $1

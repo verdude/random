@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 max_brightness=$(cat /sys/class/backlight/intel_backlight/max_brightness)
 brightness=$(cat /sys/class/backlight/intel_backlight/brightness)
