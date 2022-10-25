@@ -95,7 +95,7 @@ int send_msg(int sock, char *pd, char *msg, char *response) {
         return -1;
     }
     else {
-        if ((reslen = recv(sock, response, 20, 0)) == 0) {
+        if ((reslen = recv(sock, response, 200, 0)) == 0) {
             fprintf(stderr, "Recieved no bytes for some reason\n");
             return -1;
         }
