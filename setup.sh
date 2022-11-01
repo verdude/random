@@ -196,12 +196,12 @@ setup_server() {
     return
   fi
   [[ -n "$dry_run" ]] && echo "setup server" && return
-  if ! which apt &>/dev/null; then
+  if ! which apt-get &>/dev/null; then
     echo "could not find supported package manager."
     return
   fi
-  sudo apt update
-  sudo apt install -y git vim tmux ufw python3 fail2ban
+  sudo apt-get update
+  sudo apt-get install -y git vim tmux ufw python3 fail2ban
 
   if [[ -f /etc/pam.d/chsh ]]; then
     echo "chsh -> sufficient"
