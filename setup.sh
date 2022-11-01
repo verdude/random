@@ -8,6 +8,7 @@ if [[ $UID -eq 0 ]]; then
 fi
 
 groups=""
+secrets=""
 dry_run=""
 username=""
 dots_only=""
@@ -29,6 +30,7 @@ opts() {
       d) dots_only="true";;
       D) dry_run="true";;
       s) server_setup="true";;
+      S) secrets="true";;
       u) username="${OPTARG}";;
       b) blockcurrent="-x";;
       g) groups="-g ${OPTARG}";;
@@ -139,9 +141,13 @@ setup_dotfiles () {
       echo "Python3 not found."
       return 1
     fi
+    if [[ -n "$secrets" ]]; then
+      ./private.sh -xdt
+    fi
     python3 link.py -f
     if [[ -z "$github" ]]; then
-      if [[ -n $(which xclip) ]] && [[ -f $default_ssh_key_path ]]; then
+      if [[ -n $(which xclip 2>/dev/null) ]] &&
+        [[ -f $default_ssh_key_path ]]; then
         cat $default_ssh_key_path | xclip -sel clip
         echo "add key to github (it's in the paste buffer)."
       elif [[ -f $default_ssh_key_path ]]; then
