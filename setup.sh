@@ -202,8 +202,9 @@ setup_server() {
     sudo sed -Ei 's/required(\s*pam_shells.so)/sufficient\1/' /etc/pam.d/chsh
   fi
 
+  local myip=$(w -h | head -1 | awk '{print $3}')
   sudo chsh -s $(which nologin) root
-  sudo ufw allow 22
+  sudo ufw allow from $myip
   yes | sudo ufw enable
   cat << EOF | sudo tee /etc/fail2ban/jail.local
 [sshd]
@@ -214,7 +215,7 @@ logpath = /var/log/auth.log
 findtime = 10
 maxretry = 0
 bantime = -1
-ignoreip = $(w -h | head -1 | awk '{print $3}') 127.0.0.1
+ignoreip = $myip 127.0.0.1
 EOF
   sudo systemctl enable fail2ban
   sudo systemctl restart fail2ban
