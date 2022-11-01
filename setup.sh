@@ -78,13 +78,18 @@ setup_vim () {
   if [[ -d ~/.local/share/fonts ]]; then
     echo "Skipping font install."
   else
-    git clone --depth=1 https://github.com/powerline/fonts; cd fonts; ./install.sh; cd ../; rm -rf fonts
+    git clone --depth=1 https://github.com/powerline/fonts
+    cd fonts
+    ./install.sh
+    cd ../
+    rm -rf fonts
     # vim -c "PluginInstall|qa"
   fi
   if [[ -d ~/.vim/bundle/Vundle.vim ]]; then
     echo "Skipping Vundle install"
   else
-    git clone --depth=1 https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    git clone --depth=1 \
+      https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
   fi
 }
 
@@ -105,7 +110,10 @@ setup_folders () {
     return
   fi
   for x in $(ls ~ | grep "^[A-Z]"); do
-    if [[ "$x" != "git" ]] && [[ "$x" != "dls" ]] && [[ "$x" != "bin" ]] && [[ "$x" != "bits" ]]; then
+    if [[ "$x" != "git" ]] &&
+      [[ "$x" != "dls" ]] &&
+      [[ "$x" != "bin" ]] &&
+      [[ "$x" != "bits" ]]; then
       rm -ri ~/$x
     fi
   done
@@ -196,7 +204,7 @@ setup_server() {
 
   sudo chsh -s $(which nologin) root
   sudo ufw allow 22
-  sudo ufw enable
+  yes | sudo ufw enable
   cat << EOF | sudo tee /etc/fail2ban/jail.local
 [sshd]
 enabled = true
