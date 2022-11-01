@@ -211,7 +211,7 @@ setup_server() {
   local myip=$(w -h | head -1 | awk '{print $3}')
   sudo chsh -s $(which nologin) root
   sudo ufw allow from $myip
-  yes | sudo ufw enable
+  (yes || true) | sudo ufw enable
   cat << EOF | sudo tee /etc/fail2ban/jail.local
 [sshd]
 enabled = true
