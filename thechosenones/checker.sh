@@ -1,18 +1,17 @@
 #!/bin/bash
 
-set -euo pipefail
+set -xeuo pipefail
 
 cn=""
 msg=""
 cache=""
-CACHE="/tmp/checker.log"
 
-while getopts :hmc: flag
+while getopts :hm:c: flag
 do
   case "${flag}" in
     c) cn="${OPTARG}";;
     m) msg="${OPTARG}";;
-    h) cache="yeah"
+    h) cache="yeah";;
     :) echo "Argument required for option: -${OPTARG}"; exit 1;;
     ?) echo "Bad argument: -${OPTARG}"; exit 1;;
   esac
@@ -22,6 +21,8 @@ if [[ -z "$cn" ]]; then
   echo "missing -c arg"
   exit 1
 fi
+
+CACHE="/tmp/${cn}-checker.log"
 
 if [[ -n "$cache" ]] && [[ -f "$CACHE" ]]; then
   exit 0
