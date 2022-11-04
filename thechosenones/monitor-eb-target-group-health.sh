@@ -15,7 +15,9 @@ function usage() {
   echo "    -x                    # optional. verbose mode."
   echo "    -h"
   echo
-  echo "jq is required."
+  echo "  Required programs:"
+  echo "    - jq"
+  echo "    - awscli"
   exit ${1:-0}
 }
 
