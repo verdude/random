@@ -20,7 +20,7 @@ private=(
   .bin/
 )
 
-while getopts fdp:oxyt flag
+while getopts :fdp:oxyt flag
 do
   case ${flag} in
     f) update="";;
