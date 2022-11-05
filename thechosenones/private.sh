@@ -5,7 +5,7 @@ set -euo pipefail
 DOTDIR=${DOTDIR:-}
 name="p"
 efile="p.enc"
-dfile="$name.tar.bz2"
+dfile="$name.tar.gz"
 pfile="$HOME/.secretpw"
 decrypt=""
 update="yeah"
@@ -36,7 +36,7 @@ done
 
 # remove temp files
 function _cleanup() {
-  rm $rmflags *.tar.bz2
+  rm $rmflags *.tar.gz
 }
 trap _cleanup EXIT
 
@@ -76,7 +76,7 @@ function check() {
   enc -d
   local oldhash=$(sha1sum "$dfile" | cut -d' ' -f1)
   local newhash=$oldhash
-  local newf="$(openssl rand -hex 5).temp.tar.bz2"
+  local newf="$(openssl rand -hex 5).temp.tar.gz"
 
   tar --mtime=0 -c${tarcomp}f "$newf" "${private[@]}"
   newhash=$(sha1sum "$newf" | cut -d' ' -f1)
