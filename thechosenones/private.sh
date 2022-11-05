@@ -96,7 +96,7 @@ cd "${DOTDIR}"
 if [[ -n "$update" ]]; then
   changed=$(check)
   if [[ -n "$changed" ]]; then
-    enc
+    enc $decrypt
     echo Updated.
   else
     echo No change.
