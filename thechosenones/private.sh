@@ -8,7 +8,7 @@ efile="p.enc"
 dfile="$name.tar.bz2"
 pfile="$HOME/.secretpw"
 decrypt=""
-update=""
+update="yeah"
 cipher="chacha20"
 keyderivation="pbkdf2"
 rmflags="-f"
@@ -20,10 +20,10 @@ private=(
   .bin/
 )
 
-while getopts cdp:oxyt flag
+while getopts fdp:oxyt flag
 do
   case ${flag} in
-    c) update="yeah";;
+    f) update="";;
     d) decrypt="-d";;
     p) pfile="${OPTARG}";;
     y) rmflags="-i";;
@@ -97,10 +97,11 @@ if [[ -n "$update" ]]; then
   changed=$(check)
   if [[ -n "$changed" ]]; then
     enc
-    echo "Updated."
+    echo Updated.
   else
-    echo "No change."
+    echo No change.
   fi
 else
   enc $decrypt
+  echo Forced.
 fi
