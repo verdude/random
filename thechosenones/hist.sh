@@ -13,6 +13,7 @@ function get_hashes() {
   if [[ -n "$args" ]]; then
     hashes=($(git log --pretty=format:"%h" -- $args))
     size=${#hashes[@]}
+    cc=${hashes[$index]}
   fi
 }
 
