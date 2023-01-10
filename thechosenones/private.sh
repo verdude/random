@@ -8,7 +8,7 @@ efile="p.enc"
 dfile="$name.tar.gz"
 pfile="$HOME/.secretpw"
 decrypt=""
-update="yeah"
+force=""
 cipher="chacha20"
 keyderivation="pbkdf2"
 rmflags="-f"
@@ -23,7 +23,7 @@ private=(
 while getopts :fdp:oxyt flag
 do
   case ${flag} in
-    f) update="";;
+    f) force="yeah";;
     d) decrypt="-d";;
     p) pfile="${OPTARG}";;
     y) rmflags="-i";;
@@ -93,7 +93,7 @@ fi
 
 cd "${DOTDIR}"
 
-if [[ -n "$update" ]]; then
+if [[ -z "$force" ]]; then
   changed=$(check)
   if [[ -n "$changed" ]]; then
     enc $decrypt
