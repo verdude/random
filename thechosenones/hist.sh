@@ -3,15 +3,26 @@
 set -e
 
 cc=$(git rev-parse HEAD)
-args=$@
 index=0
 size=0
 tempfile=""
 hashes=()
 
+while getopts :xc: flag
+do
+  case ${flag} in
+    c) cc=${OPTARG};;
+    x) set -x;;
+    :) echo ${OPTARG} requires a param; exit 1;;
+  esac
+done
+
+shift $((OPTIND - 1))
+args="$*"
+
 function get_hashes() {
   if [[ -n "$args" ]]; then
-    hashes=($(git log --pretty=format:"%h" -- $args))
+    hashes=($(git log $cc --pretty=format:"%h" -- $args))
     size=${#hashes[@]}
     cc=${hashes[$index]}
   fi
@@ -34,7 +45,12 @@ function next() {
 }
 
 function log() {
-  git diff $cc^ $cc -- $args
+  git diff $cc^ $cc -- $args 2>/dev/null
+  if [[ $? -eq 128 ]]; then
+    echo "Bad Revision! ['$cc^' '$cc']"
+    echo "bye."
+    exit 1
+  fi
   git show --oneline --pretty=format:"%h %f %al" --no-patch $cc
   next
 }
