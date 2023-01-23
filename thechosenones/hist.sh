@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 
 cc=$(git rev-parse HEAD)
 stringsearch=""
@@ -48,14 +48,18 @@ function next() {
 }
 
 function log() {
-  git diff $cc^ $cc -- $args 2>/dev/null
+  logline="$(git show --oneline --pretty=format:"%h-%f-%al" --no-patch $cc)"
+  tempfile="$(mktemp XXXXXX-${logline}.tmp)"
+  git diff --color=always $cc^ $cc -- $args 2>/dev/null > "$tempfile"
   if [[ $? -eq 128 ]]; then
     echo
     echo "Bad Revision! ['$cc^' '$cc']"
     echo "bye."
     exit 1
   fi
-  git show --oneline --pretty=format:"%h %f %al" --no-patch $cc
+  less -frc "$tempfile"
+  rm "$tempfile"
+  echo "$logline"
   next
 }
 
@@ -70,5 +74,7 @@ while
     echo
     echo good day.
     break
+  else
+    echo
   fi
 do :; done
