@@ -49,7 +49,7 @@ function next() {
 
 function log() {
   logline="$(git show --oneline --pretty=format:"%h-%f-%al" --no-patch $cc)"
-  tempfile="$(mktemp XXXXXX-${logline}.tmp)"
+  tempfile="$(mktemp /tmp/${logline}-XXX.tmp)"
   git diff --color=always $cc^ $cc -- $args 2>/dev/null > "$tempfile"
   if [[ $? -eq 128 ]]; then
     echo
@@ -58,10 +58,15 @@ function log() {
     exit 1
   fi
   less -frc "$tempfile"
-  rm "$tempfile"
+  rm "${tempfile}"
   echo "$logline"
   next
 }
+
+function rm_tempfile() {
+  rm -f "${tempfile}"
+}
+trap rm_tempfile EXIT
 
 get_hashes
 

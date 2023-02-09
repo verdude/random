@@ -54,4 +54,3 @@ git config --global push.default simple
 if confirm "Generate keys? [y/N]"; then
     generate
 fi
-
