@@ -20,17 +20,22 @@ private=(
   .bin/
 )
 
-while getopts :fdp:oxyt flag
-do
+while getopts :fdp:oxyt flag; do
   case ${flag} in
-    f) force="yeah";;
-    d) decrypt="-d";;
-    p) pfile="${OPTARG}";;
-    y) rmflags="-i";;
-    t) untar="yeah";;
-    x) set -x;;
-    :) echo "-${OPTARG}: Requires an argument."; exit 1;;
-    ?) echo "-${OPTARG}: Invalid argument."; exit 1;;
+    f) force="yeah" ;;
+    d) decrypt="-d" ;;
+    p) pfile="${OPTARG}" ;;
+    y) rmflags="-i" ;;
+    t) untar="yeah" ;;
+    x) set -x ;;
+    :)
+      echo "-${OPTARG}: Requires an argument."
+      exit 1
+      ;;
+    ?)
+      echo "-${OPTARG}: Invalid argument."
+      exit 1
+      ;;
   esac
 done
 
