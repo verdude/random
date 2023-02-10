@@ -5,8 +5,8 @@ set -euo pipefail
 DOTDIR=${DOTDIR:-}
 name="p"
 efile="p.enc"
-dfile="$name.tar.gz"
-pfile="$HOME/.secretpw"
+dfile="${name}.tar.gz"
+pfile="${HOME}/.secretpw"
 decrypt=""
 force=""
 cipher="chacha20"
@@ -36,72 +36,77 @@ done
 
 # remove temp files
 function _cleanup() {
-  rm $rmflags *.tar.gz
+  rm ${rmflags} -- *.tar.gz
 }
 trap _cleanup EXIT
 
 # decrypt or encrypt private files depending on
 # whether -d was passed in or not.
 function enc() {
-  if [[ ! -f "$pfile" ]]; then
-    echo "enc: $pfile not found."
+  if [[ ! -f "${pfile}" ]]; then
+    echo "enc: ${pfile} not found."
     exit 1
   fi
 
   local dec=${1:-}
-  local infile="$efile"
-  local outfile="$dfile"
+  local infile="${efile}"
+  local outfile="${dfile}"
 
-  if [[ $dec != "-d" ]]; then
+  if [[ ${dec} != "-d" ]]; then
     dec=""
-    infile="$dfile"
-    outfile="$efile"
-    tar --mtime=0 -c${tarcomp}f "$dfile" "${private[@]}"
-  elif [[ ! -f "$efile" ]]; then
-    echo "enc: $efile not found. cannot decrypt."
+    infile="${dfile}"
+    outfile="${efile}"
+    tar --mtime=0 -c${tarcomp}f "${dfile}" "${private[@]}"
+  elif [[ ! -f "${efile}" ]]; then
+    echo "enc: ${efile} not found. cannot decrypt."
     exit 1
   fi
 
-  openssl enc $dec -pass "file:$pfile" -$cipher \
-    -in "$infile" -out "$outfile" -$keyderivation
+  openssl enc "${dec}" -pass "file:${pfile}" -${cipher} \
+    -in "${infile}" -out "${outfile}" -${keyderivation}
 
-  if [[ -n "$untar" ]]; then
-    tar x${tarcomp}f "$dfile"
+  if [[ -n "${untar}" ]]; then
+    tar x${tarcomp}f "${dfile}"
   fi
 }
 
 # check if private files have been changed.
 # writes to stdout if there was a change.
 function check() {
+  local oldhash
+  local newhash
+  local newf
+
   enc -d
-  local oldhash=$(sha1sum "$dfile" | cut -d' ' -f1)
-  local newhash=$oldhash
-  local newf="$(openssl rand -hex 5).temp.tar.gz"
 
-  tar --mtime=0 -c${tarcomp}f "$newf" "${private[@]}"
-  newhash=$(sha1sum "$newf" | cut -d' ' -f1)
+  oldhash=$(sha1sum "${dfile}" | cut -d' ' -f1)
+  newhash=${oldhash}
+  newf="$(openssl rand -hex 5).temp.tar.gz"
 
-  if [[ "$oldhash" != "$newhash" ]]; then
+  tar --mtime=0 -c${tarcomp}f "${newf}" "${private[@]}"
+  newhash=$(sha1sum "${newf}" | cut -d' ' -f1)
+
+  if [[ "${oldhash}" != "${newhash}" ]]; then
     echo changed
   fi
 }
 
-if [[ -z "$DOTDIR" ]] || [[ ! -d "$DOTDIR" ]]; then
+if [[ -z "${DOTDIR}" ]] || [[ ! -d "${DOTDIR}" ]]; then
   echo Weird.
   exit 1
 fi
 
 cd "${DOTDIR}"
 
-if [[ -z "$force" ]]; then
+if [[ -z "${force}" ]]; then
   changed=$(check)
-  if [[ -n "$changed" ]]; then
-    enc $decrypt
+  if [[ -n "${changed}" ]]; then
+    enc ${decrypt}
     echo Updated.
   else
     echo No change.
   fi
 else
-  enc $decrypt
+  enc ${decrypt}
   echo Forced.
 fi
