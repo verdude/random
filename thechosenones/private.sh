@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -Eeuo pipefail
 
 DOTDIR=${DOTDIR:-}
 name="p"
@@ -29,11 +29,11 @@ while getopts :fdp:oxyt flag; do
     t) untar="yeah" ;;
     x) set -x ;;
     :)
-      echo "-${OPTARG}: Requires an argument."
+      echo "-${OPTARG}: Requires an argument." >&2
       exit 1
       ;;
     ?)
-      echo "-${OPTARG}: Invalid argument."
+      echo "-${OPTARG}: Invalid argument." >&2
       exit 1
       ;;
   esac
@@ -49,7 +49,7 @@ trap _cleanup EXIT
 # whether -d was passed in or not.
 function enc() {
   if [[ ! -f "${pfile}" ]]; then
-    echo "enc: ${pfile} not found."
+    echo "enc: ${pfile} not found." >&2
     exit 1
   fi
 
@@ -63,7 +63,7 @@ function enc() {
     outfile="${efile}"
     tar --mtime=0 -c${tarcomp}f "${dfile}" "${private[@]}"
   elif [[ ! -f "${efile}" ]]; then
-    echo "enc: ${efile} not found. cannot decrypt."
+    echo "enc: ${efile} not found. cannot decrypt." >&2
     exit 1
   fi
 
@@ -97,7 +97,7 @@ function check() {
 }
 
 if [[ -z "${DOTDIR}" ]] || [[ ! -d "${DOTDIR}" ]]; then
-  echo Weird.
+  echo Weird. >&2
   exit 1
 fi
 
