@@ -84,12 +84,12 @@ function check() {
 
   enc -d
 
-  oldhash=$(sha1sum "${dfile}" | cut -d' ' -f1)
+  oldhash=$(shasum "${dfile}" | cut -d' ' -f1)
   newhash=${oldhash}
   newf="$(openssl rand -hex 5).temp.tar.gz"
 
   tar --mtime=0 -c${tarcomp}f "${newf}" "${private[@]}"
-  newhash=$(sha1sum "${newf}" | cut -d' ' -f1)
+  newhash=$(shasum "${newf}" | cut -d' ' -f1)
 
   if [[ "${oldhash}" != "${newhash}" ]]; then
     echo changed
