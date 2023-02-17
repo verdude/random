@@ -1,20 +1,27 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -euo pipefail
 
 cc=$(git rev-parse HEAD)
 stringsearch=""
+quiet=""
+useless="yeah"
+diffargs=()
 index=0
 size=0
 tempfile=""
 hashes=()
 
-while getopts :xS:c: flag
+while getopts :xltnqS:c: flag
 do
   case ${flag} in
     S) stringsearch="-S ${OPTARG}";;
     c) cc=${OPTARG};;
     x) set -x;;
+    t) diffargs=(--compact-summary);;
+    l) diffargs=(--name-only);;
+    n) useless="";;
+    q) quiet="yeah";;
     :) echo ${OPTARG} requires a param; exit 1;;
   esac
 done
@@ -27,7 +34,6 @@ function get_hashes() {
     hashes=($(git log $cc $stringsearch --pretty=format:"%h" -- $args))
     size=${#hashes[@]}
     cc=${hashes[$index]}
-    echo $hashes
   fi
 }
 
@@ -48,18 +54,36 @@ function next() {
 }
 
 function log() {
+  local logline
+  local output
+
   logline="$(git show --oneline --pretty=format:"%h-%f-%al" --no-patch $cc)"
-  tempfile="$(mktemp /tmp/${logline}-XXX.tmp)"
-  git diff --color=always $cc^ $cc -- $args 2>/dev/null > "$tempfile"
+  if [[ -n ${useless} ]]; then
+    tempfile="$(mktemp /tmp/${logline}-XXX.tmp)"
+    output=("--output=${tempfile}")
+  else
+    output=()
+  fi
+
+  git diff "${output[@]}" "${diffargs[@]}" --color=always $cc^ $cc -- $args 2>/dev/null
+
   if [[ $? -eq 128 ]]; then
     echo
     echo "Bad Revision! ['$cc^' '$cc']"
     echo "bye."
     exit 1
   fi
-  less -frc "$tempfile"
-  rm "${tempfile}"
-  echo "$logline"
+
+  if [[ -n ${useless} ]]; then
+    less -frc "$tempfile"
+  fi
+
+  rm -f "${tempfile}"
+
+  if [[ -z ${quiet} ]]; then
+    echo "$logline"
+  fi
+
   next
 }
 
