@@ -12,7 +12,19 @@ size=0
 tempfile=""
 hashes=()
 
-while getopts :xltnqS:c: flag
+function usage() {
+  cat <<EOF
+-S <arg> stringsearch
+-c <arg> Set starting commit
+-x       set -o xtrace
+-t       sets --compact-summary
+-l       sets --name-only
+-n       Don't use less for diff output
+-q       quiet
+EOF
+}
+
+while getopts :xhltnqS:c: flag
 do
   case ${flag} in
     S) stringsearch="-S ${OPTARG}";;
@@ -22,7 +34,18 @@ do
     l) diffargs=(--name-only);;
     n) useless="";;
     q) quiet="yeah";;
-    :) echo ${OPTARG} requires a param; exit 1;;
+    h)
+      usage
+      exit 0
+      ;;
+    :)
+      echo ${OPTARG} requires a param
+      exit 1
+      ;;
+    ?)
+      echo "invalid arg: ${OPTARG}"
+      exit 1
+      ;;
   esac
 done
 
