@@ -85,13 +85,6 @@ setup_vim () {
     ./install.sh
     cd ../
     rm -rf fonts
-    # vim -c "PluginInstall|qa"
-  fi
-  if [[ -d ~/.vim/bundle/Vundle.vim ]]; then
-    echo "Skipping Vundle install"
-  else
-    git clone --depth=1 \
-      https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
   fi
 }
 
