@@ -2,6 +2,7 @@
 
 set -Eeuo pipefail
 
+declare -i getdiff=0
 DOTDIR=${DOTDIR:-}
 name="p"
 efile="p.enc"
@@ -14,26 +15,47 @@ keyderivation="pbkdf2"
 rmflags="-f"
 untar=""
 tarcomp="z"
+tempcheckdir=""
 private=(
   .secrets.sh
   .texterrc
   .bin/
 )
 
-while getopts :fdp:oxyt flag; do
+function usage() {
+  cat <<EOF
+Options:
+  -f            Force
+  -d            Decrypt
+  -p <filepath> Set pfile
+  -y            Prompt for each deletion
+  -t            untar after extraction
+  -c            Get diff
+  -x            set -o xtrace
+EOF
+}
+
+while getopts :fdp:hoxytc flag; do
   case ${flag} in
     f) force="yeah" ;;
     d) decrypt="-d" ;;
     p) pfile="${OPTARG}" ;;
     y) rmflags="-i" ;;
     t) untar="yeah" ;;
+    c) getdiff=1 ;;
     x) set -x ;;
+    h)
+      usage
+      exit 0
+      ;;
     :)
       echo "-${OPTARG}: Requires an argument." >&2
+      usage
       exit 1
       ;;
     ?)
       echo "-${OPTARG}: Invalid argument." >&2
+      usage
       exit 1
       ;;
   esac
@@ -42,6 +64,7 @@ done
 # remove temp files
 function _cleanup() {
   rm ${rmflags} -- *.tar.gz
+  rm -rf "${tempcheckdir}"
 }
 trap _cleanup EXIT
 
@@ -67,8 +90,10 @@ function enc() {
     exit 1
   fi
 
-  openssl enc "${dec}" -pass "file:${pfile}" -${cipher} \
-    -in "${infile}" -out "${outfile}" -${keyderivation}
+  opensslargs=("enc" ${dec:+"${dec}"} "-pass" "file:${pfile}" "-${cipher}"
+    "-in" "${infile}" "-out" "${outfile}" "-${keyderivation}")
+
+  openssl ${opensslargs[@]}
 
   if [[ -n "${untar}" ]]; then
     tar x${tarcomp}f "${dfile}"
@@ -76,7 +101,7 @@ function enc() {
 }
 
 # check if private files have been changed.
-# writes to stdout if there was a change.
+# Returns 0 if files have changed.
 function check() {
   local oldhash
   local newhash
@@ -92,8 +117,19 @@ function check() {
   newhash=$(shasum "${newf}" | cut -d' ' -f1)
 
   if [[ "${oldhash}" != "${newhash}" ]]; then
-    echo changed
+    return 0
+  else
+    return 1
   fi
+}
+
+function getdiff() {
+  tempcheckdir=$(mktemp -d)
+  enc -d
+  tar kxf "${dfile}" -C "${tempcheckdir}"
+  for file in "${private[@]}"; do
+    git diff --no-index "${tempcheckdir}/${file}" "${file}"
+  done
 }
 
 if [[ -z "${DOTDIR}" ]] || [[ ! -d "${DOTDIR}" ]]; then
@@ -103,9 +139,13 @@ fi
 
 cd "${DOTDIR}"
 
+if (( getdiff )); then
+  getdiff
+  exit 0
+fi
+
 if [[ -z "${force}" ]]; then
-  changed=$(check)
-  if [[ -n "${changed}" ]]; then
+  if check; then
     enc ${decrypt}
     echo Updated.
   else
