@@ -26,10 +26,7 @@ def load_from_env():
 
 class Texter():
     def __init__(self, config_path):
-        if config_path:
-            self.config = read_from_file(config_path + "/.texterrc")
-        else:
-            self.config = load_from_env()
+        self.config = load_from_env()
         self.tc = Client(str(self.config["account_sid"]),str(self.config["auth_token"]))
 
     def send(self, number, message):
