@@ -7,6 +7,6 @@ if [[ $brightness -gt 0 ]]; then
     if [[ $brightness -lt 5 ]]; then
         brightness=5
     fi
-    echo "echo $brightness > /sys/class/backlight/intel_backlight/brightness" | sudo bash
+    echo $brightness | sudo tee /sys/class/backlight/intel_backlight/brightness
 fi
 
