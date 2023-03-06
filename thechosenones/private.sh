@@ -18,7 +18,6 @@ tarcomp="z"
 tempcheckdir=""
 private=(
   .secrets.sh
-  .texterrc
   .bin/
 )
 
