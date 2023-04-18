@@ -1,0 +1,31 @@
+[GLOBAL]
+pants_version = "2.15.0"
+pants_distdir = "thechosenones"
+backend_packages = [
+"pants.backend.python",
+"pants.backend.python.lint.black",
+"pants.backend.python.lint.isort",
+"pants.backend.python.lint.pyupgrade",
+"pants.backend.python.lint.autoflake",
+]
+pants_ignore = [
+"thechosenones/",
+"__pycache__",
+".*/",
+]
+
+[python]
+interpreter_constraints = ["CPython==3.10.*"]
+enable_resolves = true
+
+[python.resolves]
+python-default = "py.lock"
+
+[source]
+root_patterns = [
+  "langs/py",
+]
+
+[anonymous-telemetry]
+enabled = true
+repo_id = "f3f2f156-e5b4-4d30-b926-f43bbd1ee3f9"

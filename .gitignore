@@ -16,3 +16,6 @@ target/
 *.rdb
 thechosenones/clip
 thechosenones/clip_daemon
+.pants.d/
+.pids/
+*.pex

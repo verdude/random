@@ -37,7 +37,7 @@ if [[ -n "$cache" ]] && [[ -f "$CACHE" ]]; then
   exit 0
 fi
 
-out="$($exe | grep "${cn}")"
+out="$($exe | grep -E "${cn}")"
 
 if [[ -n $out ]]; then
   echo 1 > $CACHE
