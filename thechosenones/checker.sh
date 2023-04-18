@@ -41,7 +41,7 @@ out="$($exe | grep -E "${cn}")"
 
 if [[ -n $out ]]; then
   echo 1 > $CACHE
-  send_text -m "${msg:-$0}" ${configarg}
+  send-sms -m "${msg:-$0}" ${configarg}
 elif [[ -f $CACHE ]]; then
   rm $CACHE
 fi
