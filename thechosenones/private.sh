@@ -2,18 +2,16 @@
 
 set -Eeuo pipefail
 
-declare -i getdiff=0
+declare -i getdiff=0 reverse=0 untar=0 force=0
 DOTDIR=${DOTDIR:-}
 name="p"
 efile="p.enc"
 dfile="${name}.tar.gz"
 pfile="${HOME}/.secretpw"
 decrypt=""
-force=""
 cipher="chacha20"
 keyderivation="pbkdf2"
 rmflags="-f"
-untar=""
 tarcomp="z"
 tempcheckdir=""
 private=(
@@ -30,18 +28,20 @@ Options:
   -y            Prompt for each deletion
   -t            untar after extraction
   -c            Get diff
+  -r            Reverse diff inputs
   -x            set -o xtrace
 EOF
 }
 
-while getopts :fdp:hoxytc flag; do
+while getopts :fdp:hoxytcr flag; do
   case ${flag} in
-    f) force="yeah" ;;
+    f) force=1 ;;
     d) decrypt="-d" ;;
     p) pfile="${OPTARG}" ;;
     y) rmflags="-i" ;;
-    t) untar="yeah" ;;
+    t) untar=1 ;;
     c) getdiff=1 ;;
+    r) reverse=1 ;;
     x) set -x ;;
     h)
       usage
@@ -94,7 +94,7 @@ function enc() {
 
   openssl ${opensslargs[@]}
 
-  if [[ -n "${untar}" ]]; then
+  if (( untar )); then
     tar x${tarcomp}f "${dfile}"
   fi
 }
@@ -127,7 +127,11 @@ function getdiff() {
   enc -d
   tar kxf "${dfile}" -C "${tempcheckdir}"
   for file in "${private[@]}"; do
-    git diff --no-index "${tempcheckdir}/${file}" "${file}"
+    args=("${tempcheckdir}/${file}" "${file}")
+    if (( reverse )); then
+      args=("${file}" "${tempcheckdir}/${file}")
+    fi
+    git diff --no-index "${args[@]}"
   done
 }
 
@@ -143,14 +147,12 @@ if (( getdiff )); then
   exit 0
 fi
 
-if [[ -z "${force}" ]]; then
-  if check; then
-    enc ${decrypt}
-    echo Updated.
-  else
-    echo No change.
-  fi
-else
+if (( force )); then
   enc ${decrypt}
   echo Forced.
+elif check; then
+  enc ${decrypt}
+  echo Updated.
+else
+  echo No change.
 fi
