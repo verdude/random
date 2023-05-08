@@ -9,13 +9,15 @@ useless="yeah"
 diffargs=()
 index=0
 size=0
+colors="always"
 tempfile=""
 hashes=()
 
 function usage() {
   cat <<EOF
 -S <arg> stringsearch
--c <arg> Set starting commit
+-r <arg> Set starting commit
+-c       Disable Colors
 -x       set -o xtrace
 -t       sets --compact-summary
 -l       sets --name-only
@@ -24,11 +26,12 @@ function usage() {
 EOF
 }
 
-while getopts :xhltnqS:c: flag
+while getopts :xhltnqS:cr: flag
 do
   case ${flag} in
     S) stringsearch="-S ${OPTARG}";;
-    c) cc=${OPTARG};;
+    r) cc=${OPTARG};;
+    c) colors="never";;
     x) set -x;;
     t) diffargs=(--compact-summary);;
     l) diffargs=(--name-only);;
@@ -88,7 +91,7 @@ function log() {
     output=()
   fi
 
-  git diff "${output[@]}" "${diffargs[@]}" --color=always $cc^ $cc -- $args 2>/dev/null
+  git diff "${output[@]}" "${diffargs[@]}" --color="${colors}" $cc^ $cc -- $args 2>/dev/null
 
   if [[ $? -eq 128 ]]; then
     echo
