@@ -9,6 +9,7 @@ efile="p.enc"
 dfile="${name}.tar.gz"
 pfile="${HOME}/.secretpw"
 decrypt=""
+force=""
 cipher="chacha20"
 keyderivation="pbkdf2"
 rmflags="-f"
@@ -87,6 +88,10 @@ function enc() {
   elif [[ ! -f "${efile}" ]]; then
     echo "enc: ${efile} not found. cannot decrypt." >&2
     exit 1
+  fi
+
+  if [[ "$OSTYPE" =~ darwin* ]]; then
+    cipher="chacha"
   fi
 
   opensslargs=("enc" ${dec:+"${dec}"} "-pass" "file:${pfile}" "-${cipher}"
