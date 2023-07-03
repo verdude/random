@@ -11,6 +11,7 @@ pfile="${HOME}/.secretpw"
 decrypt=""
 force=""
 cipher="chacha20"
+tarargs=(--mtime=0)
 keyderivation="pbkdf2"
 rmflags="-f"
 tarcomp="z"
@@ -19,6 +20,10 @@ private=(
   .secrets.sh
   .bin/
 )
+
+if [[ "$OSTYPE" =~ darwin* ]]; then
+  tarargs=()
+fi
 
 function usage() {
   cat <<EOF
@@ -84,14 +89,10 @@ function enc() {
     dec=""
     infile="${dfile}"
     outfile="${efile}"
-    tar --mtime=0 -c${tarcomp}f "${dfile}" "${private[@]}"
+    tar "${tarargs[@]}" -c${tarcomp}f "${dfile}" "${private[@]}"
   elif [[ ! -f "${efile}" ]]; then
     echo "enc: ${efile} not found. cannot decrypt." >&2
     exit 1
-  fi
-
-  if [[ "$OSTYPE" =~ darwin* ]]; then
-    cipher="chacha"
   fi
 
   opensslargs=("enc" ${dec:+"${dec}"} "-pass" "file:${pfile}" "-${cipher}"
@@ -100,7 +101,7 @@ function enc() {
   openssl ${opensslargs[@]}
 
   if (( untar )); then
-    tar x${tarcomp}f "${dfile}"
+    tar "${tarargs[@]}" x${tarcomp}f "${dfile}"
   fi
 }
 
@@ -117,7 +118,7 @@ function check() {
   newhash=${oldhash}
   newf="$(openssl rand -hex 5).temp.tar.gz"
 
-  tar --mtime=0 -c${tarcomp}f "${newf}" "${private[@]}"
+  tar "${tarargs[@]}" -c${tarcomp}f "${newf}" "${private[@]}"
   newhash=$(shasum "${newf}" | cut -d' ' -f1)
 
   if [[ "${oldhash}" != "${newhash}" ]]; then
