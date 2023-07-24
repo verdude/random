@@ -89,7 +89,7 @@ function enc() {
     dec=""
     infile="${dfile}"
     outfile="${efile}"
-    tar "${tarargs[@]}" -c${tarcomp}f "${dfile}" "${private[@]}"
+    tar -c${tarcomp}f "${dfile}" "${tarargs[@]}" "${private[@]}"
   elif [[ ! -f "${efile}" ]]; then
     echo "enc: ${efile} not found. cannot decrypt." >&2
     exit 1
@@ -101,7 +101,7 @@ function enc() {
   openssl ${opensslargs[@]}
 
   if (( untar )); then
-    tar "${tarargs[@]}" x${tarcomp}f "${dfile}"
+    tar x${tarcomp}f "${dfile}" "${tarargs[@]}"
   fi
 }
 
