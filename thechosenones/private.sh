@@ -39,7 +39,7 @@ Options:
 EOF
 }
 
-while getopts :fdp:hoxytcr flag; do
+while getopts :fdD:p:hoxytcr flag; do
   case ${flag} in
     f) force=1 ;;
     d) decrypt="-d" ;;
@@ -48,6 +48,7 @@ while getopts :fdp:hoxytcr flag; do
     t) untar=1 ;;
     c) getdiff=1 ;;
     r) reverse=1 ;;
+    D) DOTDIR="${OPTARG}" ;;
     x) set -x ;;
     h)
       usage

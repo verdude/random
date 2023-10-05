@@ -135,7 +135,7 @@ setup_dotfiles () {
       return 1
     fi
     if [[ -n "$secrets" ]]; then
-      ./private.sh -xdt
+      "$default_gitdir/random/$repo_script_dir/private.sh" -xdtD "$default_git_dir/dots"
     fi
     python3 link.py -f
     if [[ -z "$github" ]]; then
