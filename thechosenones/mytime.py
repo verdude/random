@@ -117,4 +117,3 @@ if __name__ == "__main__":
         print("Clock In time: %s" % clock_out_time)
     else:
         logging.error("No punches provided.")
-
