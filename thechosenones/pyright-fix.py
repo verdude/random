@@ -29,8 +29,8 @@ for entry in json_output:
     qf_entries = []
     for error in entry["errors"]:
         error_text = error["error"].replace("'", "''")
-        qf_entry = "{{'filename': '{}', 'lnum': {}, 'col': {}}}".format(
-            filename, error["row"], error["col"]
+        qf_entry = "{{'filename': '{}', 'lnum': {}, 'col': {}, 'text': '{}'}}".format(
+            filename, error["row"], error["col"], error_text
         )
         qf_entries.append(qf_entry)
     if qf_entries:
