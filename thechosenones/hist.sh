@@ -3,15 +3,13 @@
 set -euo pipefail
 
 cc=$(git rev-parse HEAD)
-stringsearch=""
-quiet=""
-useless="yeah"
+declare -i index=0 size=0 useless=1 loud=1
+stringsearch=()
 diffargs=()
-index=0
-size=0
 colors="always"
 tempfile=""
 hashes=()
+merges=()
 
 function usage() {
   cat <<EOF
@@ -21,22 +19,24 @@ function usage() {
 -x       set -o xtrace
 -t       sets --compact-summary
 -l       sets --name-only
+-m       sets --merges
 -n       Don't use less for diff output
 -q       quiet
 EOF
 }
 
-while getopts :xhltnqS:cr: flag
+while getopts :xhltnqS:cr:m flag
 do
   case ${flag} in
-    S) stringsearch="-S ${OPTARG}";;
+    S) stringsearch=(-S "${OPTARG}");;
     r) cc=${OPTARG};;
     c) colors="never";;
     x) set -x;;
     t) diffargs=(--compact-summary);;
     l) diffargs=(--name-only);;
-    n) useless="";;
-    q) quiet="yeah";;
+    n) useless=0;;
+    m) merges=(--merges);;
+    q) loud=0;;
     h)
       usage
       exit 0
@@ -56,24 +56,21 @@ shift $((OPTIND - 1))
 args="$*"
 
 function get_hashes() {
-  if [[ -n "$args$stringsearch$cc" ]]; then
-    hashes=($(git log $cc $stringsearch --pretty=format:"%h" -- $args))
-    size=${#hashes[@]}
+  hashes=($(git log "$cc" "${stringsearch[@]}" "${merges[@]}" --pretty=format:"%h" -- $args))
+  size=${#hashes[@]}
+  if ((size)); then
     cc=${hashes[$index]}
+  else
+    echo "Nothing found."
+    exit
   fi
 }
 
 function next() {
+  index=$(($index + 1))
   if [[ $index -lt $size ]]; then
-    cc=${hashes[0]}
-  else
-    cc=$(git rev-parse $cc^)
-  fi
-
-  if [[ $index -lt $size ]]; then
-    index=$(($index + 1))
     cc=${hashes[$index]}
-  elif [[ $size -ne 0 ]]; then
+  else
     echo "finished."
     exit
   fi
@@ -84,7 +81,7 @@ function log() {
   local output
 
   logline="$(git show --oneline --pretty=format:"%h-%f-%al" --no-patch $cc)"
-  if [[ -n ${useless} ]]; then
+  if ((useless)); then
     tempfile="$(mktemp /tmp/${logline}-XXX.tmp)"
     output=("--output=${tempfile}")
   else
@@ -100,13 +97,13 @@ function log() {
     exit 1
   fi
 
-  if [[ -n ${useless} ]]; then
+  if ((useless)); then
     less -frc "$tempfile"
   fi
 
   rm -f "${tempfile}"
 
-  if [[ -z ${quiet} ]]; then
+  if ((loud)); then
     echo "$logline"
   fi
 
