@@ -5,3 +5,10 @@ pex_binary(
     entry_point="send_text.py",
     output_path="send-sms.pex",
 )
+
+pex_binary(
+  name="haha",
+  entry_point="uvicorn",
+  dependencies=["langs/py/hehenice.py"],
+  execution_mode="venv",
+)
