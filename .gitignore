@@ -20,3 +20,4 @@ thechosenones/clip_daemon
 .pids/
 *.pex
 rtmp
+rotation

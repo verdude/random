@@ -1,11 +1,20 @@
-rtmp:
-	zig build-exe -OReleaseSmall rtmp.zig
+dryclean := n
+release := -OReleaseSmall
+
+ifneq ($(dryclean),n)
+override dryclean :=
+endif
+
+rtmp: rtmp.zig
+	zig build-exe $(release) rtmp.zig
+
+rotation: rotation.zig
+	zig build-exe $(release) rotation.zig
 
 .PHONY: install clean
-install: rtmp
+install: rtmp rotation
 	install rtmp ../../thechosenones/
+	install rotation ../../thechosenones/
 
 clean:
-	rm -f rtmp
-	rm -f rtmp.o
-	rm -f ../../thechosenones/rtmp
+	git clean -xf$(dryclean)
