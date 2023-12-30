@@ -44,6 +44,8 @@ function block_user() {
     return 1
   fi
   echo "Disabling $(whoami)"
+  nologinshellpath=$(which nologin)
+  nologinshellpath=${nologinshellpath:-$(which false)}
   sudo chsh -s $(which nologin) $(whoami)
   # TODO: block in ssh
 }

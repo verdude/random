@@ -33,7 +33,12 @@ fn parse_args() !Args {
     return Args{ .x = x, .y = y, .n = n };
 }
 
-pub fn main() !void {
+pub fn main() !u8 {
     const args = try parse_args();
     std.log.info("{} {} {}", .{ args.x, args.y, args.n });
+    if (args.y < args.n) {
+        std.log.err("y[{}] Must be >= n[{}]", .{ args.y, args.n });
+        return 1;
+    }
+    return 0;
 }

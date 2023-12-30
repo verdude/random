@@ -13,7 +13,3 @@ sudo apt install zlib1g \
   curl
 
 curl https://pyenv.run | bash -
-
-spyenv
-
-pyenv install 3.6 3.11
