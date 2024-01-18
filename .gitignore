@@ -21,3 +21,6 @@ thechosenones/clip_daemon
 *.pex
 rtmp
 rotation
+vgcore.*
+zig-out
+zig-cache
