@@ -17,9 +17,13 @@ fn create_str(size: u8, fonts: []const FontType, mem: []u8) ![]const u8 {
     var endn = currn + 4;
     var offset: u64 = 0;
     const comma = ",";
+    const command = "command:";
+
+    var s = try bufPrint(mem[offset..], "{s}", .{command});
+    offset += s.len;
 
     while (currn < endn) : (currn += 1) {
-        var s = try bufPrint(mem[offset..], "{s}{d};", .{ prefix, currn });
+        s = try bufPrint(mem[offset..], "{s}{d};", .{ prefix, currn });
         offset += s.len;
         for (fonts, 1..) |font, i| {
             s = try bufPrint(
@@ -47,18 +51,28 @@ pub fn main() !u8 {
 
     const mem = try alloc.alloc(u8, len);
     defer alloc.free(mem);
+
     const ft = [_]FontType{
         FontType{ .type = "xft", .name = "Hermit" },
         FontType{ .type = "xft", .name = "DejaVuSans" },
-        FontType{ .type = "ttf", .name = "Noto Sans" },
-        FontType{ .type = "ttf", .name = "Linux Libertine" },
+        FontType{ .type = "xft", .name = "Linux Libertine" },
+        FontType{ .type = "xft", .name = "Noto Sans CJK SC" },
     };
 
-    const str = try create_str(10, &ft, mem);
-
     const stdout = getStdOut();
-    stdout.writeAll(str) catch return 1;
-    _ = stdout.write("\n") catch return 0;
+    const sizes = [_]u8{ 8, 10, 12, 14, 16 };
+    var key: []const u8 = undefined;
+    var str: []const u8 = undefined;
+    var offset: u64 = 0;
+    inline for (sizes, 1..) |size, i| {
+        key = try bufPrint(mem[offset..], "{s}{d}: ", .{ "URxvt.keysym.M-C-", i });
+        offset += key.len;
+        str = try create_str(size, &ft, mem[offset..]);
+        offset += str.len;
+        str = try bufPrint(mem[offset..], "{s}", .{"\n"});
+        offset += str.len;
+    }
+    try stdout.writeAll(mem[0..offset]);
 
     return 0;
 }
