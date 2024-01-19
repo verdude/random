@@ -54,8 +54,7 @@ pub fn main() !u8 {
 
     const ft = [_]FontType{
         FontType{ .type = "xft", .name = "Hermit" },
-        FontType{ .type = "xft", .name = "DejaVuSans" },
-        FontType{ .type = "xft", .name = "Linux Libertine" },
+        FontType{ .type = "xft", .name = "DejaVuSansMono" },
         FontType{ .type = "xft", .name = "Noto Sans CJK SC" },
         FontType{ .type = "xft", .name = "Noto Color Emoji" },
     };
