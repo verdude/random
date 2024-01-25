@@ -22,7 +22,7 @@ reponame="random"
 repo_script_dir="thechosenones"
 github="$(ssh -o StrictHostKeyChecking=no git@github.com 2>&1 | grep 'Permission denied (publickey).')" && :
 
-opts() {
+function opts() {
   while getopts ezxDdsSbu:g: flag
   do
     case ${flag} in
@@ -40,7 +40,7 @@ opts() {
   done
 }
 
-die() {
+function die() {
   if [[ -n "$single_command" ]]; then
     echo "Reached stopping point."
     exit 0
@@ -62,20 +62,20 @@ confirm() {
   esac
 }
 
-pushd () {
+function pushd () {
   command pushd $@ &> /dev/null
 }
 
-popd () {
+function popd () {
   command popd $@ &> /dev/null
 }
 
-setup_git () {
+function setup_git () {
   [[ -n "$dry_run" ]] && echo "git setup" && return
   $repo_script_dir/git_setup.sh
 }
 
-setup_vim () {
+function setup_vim () {
   [[ -n "$dry_run" ]] && echo "vim setup" && return
   if [[ -d ~/.local/share/fonts ]]; then
     echo "Skipping font install."
@@ -88,7 +88,7 @@ setup_vim () {
   fi
 }
 
-setup_tmux() {
+function setup_tmux() {
   [[ -n "$dry_run" ]] && echo "tmux setup" && return
   if [[ -d ~/.tmux/plugins/tpm ]]; then
     echo "tmux tpm already installed."
@@ -97,7 +97,16 @@ setup_tmux() {
   fi
 }
 
-setup_folders () {
+function setup_x_themes() {
+  [[ -n "$dry_run" ]] && echo "setup folders" && return
+  if [[ -d $GITDIR/Xresources-themes ]]; then
+    echo "Xresources-themes already installed"
+  else
+    git clone "https://github.com/verdude/xthemes" $GITDIR/xthemes
+  fi
+}
+
+function setup_folders () {
   [[ -n "$dry_run" ]] && echo "setup folders" && return
   mkdir -p ~/bin ~/dls ~/bits
   if [[ $(uname) = "Darwin" ]]; then
@@ -114,7 +123,7 @@ setup_folders () {
   done
 }
 
-setup_dotfiles () {
+function setup_dotfiles () {
   [[ -n "$dry_run" ]] && echo "setup_dot_files" && return
   mkdir -p "$default_gitdir"
   pushd "$default_gitdir"
@@ -154,12 +163,12 @@ setup_dotfiles () {
   popd
 }
 
-add_scripts () {
+function add_scripts () {
   [[ -n "$dry_run" ]] && echo "add_scripts" && return
   ./add_scripts.sh -q
 }
 
-setup () {
+function setup () {
   [[ -n "$dry_run" ]] && echo "random repo setup" && return
   mkdir -p "$default_gitdir"
   cd "$default_gitdir"
@@ -175,7 +184,7 @@ setup () {
   cd "$reponame"
 }
 
-setup_gitdir() {
+function setup_gitdir() {
   [[ -n "$dry_run" ]] && echo "setup git dir" && return
   if [[ "$UID" -ne $(stat -tc %u "$default_gitdir" 2>/dev/null) ]]; then
     if ! confirm "Do you want to use $default_gitdir as your Git Directory? [y/N]: " 0; then
@@ -184,7 +193,7 @@ setup_gitdir() {
   fi
 }
 
-setup_server() {
+function setup_server() {
   if [[ -z "$server_setup" ]]; then
     return
   fi
@@ -221,7 +230,7 @@ EOF
   die
 }
 
-setup_user() {
+function setup_user() {
   [[ -z "$username" ]] && return
   [[ -n "$dry_run" ]] && echo "create user" && return
   ${scriptpath}/${repo_script_dir}/newuser.sh -u $username $blockcurrent $groups
@@ -229,7 +238,7 @@ setup_user() {
   die
 }
 
-delete_self() {
+function delete_self() {
   [[ -z "$deleteself" ]] && return
   [[ -n "$dry_run" ]] && echo "delete_self" && return
   rm -rf ${scriptpath}
