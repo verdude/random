@@ -4,11 +4,15 @@ base-devel
 git
 tmux
 emacs
+gdb
 ed
 pulseaudio
 pamixer
 spotifyd
 xorg-xset
+xorg-server
+xorg-xinit
+rofi
 redshift
 unclutter
 mlocate
