@@ -1,11 +1,19 @@
 set -xEeuo pipefail
 
-mapfile -t screens < <(xrandr | grep " connected" | awk '{print $1}')
+mapfile -t screens < <(xrandr --listmonitors | awk '/\-/ {print $4}')
 
 if [[ "${#screens[@]}" -eq 1 ]] && [[ "${screens[0]}" == "Virtual-1" ]]; then
+  echo "top"
+  exit
   xrandr --addmode Virtual-1 2560x1440
   xrandr --output Virtual-1 --primary --mode 2560x1440
+elif [[ "${#screens[@]}" -eq 2 ]] && [[ "${screens[0]}" =~ ^DP-[0-9]+$ ]]; then
+  xrandr --output DP-2 --mode 3840x2160 --rate 144
+  xrandr --output DP-0 --mode 2560x1440 --rate 144
+  xrandr --output DP-0 --right-of DP-2
 else
+  echo "double bottomt"
+  exit
   xrandr --addmode HDMI2 2560x1440
   xrandr --output HDMI2 --primary --mode 2560x1440 --rate 144
   xrandr --output DP1 --mode 2560x1440 --rate 144

@@ -108,7 +108,7 @@ function setup_x_themes() {
 
 function setup_folders () {
   [[ -n "$dry_run" ]] && echo "setup folders" && return
-  mkdir -p ~/bin ~/dls ~/bits
+  mkdir -p ~/bin ~/dls
   if [[ $(uname) = "Darwin" ]]; then
     echo "Skipping removing folders because macOS"
     return
@@ -117,7 +117,6 @@ function setup_folders () {
     if [[ "$x" != "git" ]] &&
       [[ "$x" != "dls" ]] &&
       [[ "$x" != "bin" ]] &&
-      [[ "$x" != "bits" ]]; then
       rm -ri ~/$x
     fi
   done

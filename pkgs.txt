@@ -1,4 +1,5 @@
 i3lock
+broot
 i3-wm
 base-devel
 git
@@ -53,3 +54,7 @@ gnome-keyring
 rxvt-unicode
 broot
 mupdf
+ttf-dejavu
+otf-hermit
+noto-fonts
+noto-fonts-cjk

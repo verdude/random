@@ -58,7 +58,6 @@ pub fn main() !u8 {
         FontType{ .type = "xft", .name = "Noto Sans CJK SC" },
         FontType{ .type = "xft", .name = "notosanssymbols2" },
         FontType{ .type = "xft", .name = "Noto Color Emoji" },
-        FontType{ .type = "xft", .name = "FreeMono" },
     };
 
     const stdout = getStdOut();
