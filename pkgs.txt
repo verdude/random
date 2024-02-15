@@ -9,6 +9,7 @@ gdb
 ed
 pulseaudio
 pamixer
+spotify-launcher
 spotifyd
 xorg-xset
 xorg-server
@@ -36,7 +37,7 @@ unzip
 libxcrypt-compat
 docker
 docker-compose
-terminator
+alacritty
 openssl
 valgrind
 radare2
