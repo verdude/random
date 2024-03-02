@@ -54,14 +54,14 @@ pub fn main() !u8 {
 
     const ft = [_]FontType{
         FontType{ .type = "xft", .name = "Hermit" },
-        FontType{ .type = "xft", .name = "DejaVuSansMono" },
-        FontType{ .type = "xft", .name = "Noto Sans CJK SC" },
+        FontType{ .type = "xft", .name = "Noto Sans Mono" },
+        FontType{ .type = "xft", .name = "Noto Sans Mono CJK SC" },
         FontType{ .type = "xft", .name = "notosanssymbols2" },
         FontType{ .type = "xft", .name = "Noto Color Emoji" },
     };
 
     const stdout = getStdOut();
-    const sizes = [_]u8{ 8, 10, 12, 14, 16 };
+    const sizes = [_]u8{ 8, 10, 12, 14, 16, 18, 20, 22, 24 };
     var key: []const u8 = undefined;
     var str: []const u8 = undefined;
     var offset: u64 = 0;

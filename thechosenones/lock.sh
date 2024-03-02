@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
-f=/home/erra/git/dropper_api/cloudapp.png
-if [[ -f $f ]]; then
-  img="-f -t -c 000000 -i $f"
-else
-  img="-f -c 000000"
-fi
+fn=/tmp/tmp.png
+ssh-add -D
 secret-tool lock
-i3lock $img
+scrot "$fn"
+convert "$fn" -blur 0x8 "$fn"
+i3lock -i "$fn"

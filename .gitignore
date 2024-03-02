@@ -24,3 +24,4 @@ rotation
 vgcore.*
 zig-out
 zig-cache
+tags
