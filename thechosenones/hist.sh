@@ -80,7 +80,7 @@ function log() {
   local logline
   local output
 
-  logline="$(git show --oneline --pretty=format:"%h-%f-%al-%ai" --no-patch $cc)"
+  logline="$(git show --oneline --pretty=format:"%h-%f-%al-%aI" --no-patch $cc)"
   if ((useless)); then
     tempfile="$(mktemp /tmp/${logline}-XXX.tmp)"
     output=("--output=${tempfile}")
