@@ -14,7 +14,8 @@ merges=()
 function usage() {
   cat <<EOF
 -S <arg> stringsearch
--r <arg> Set starting commit
+-r <arg> Set starting ref
+-b <arg> Set base ref
 -c       Disable Colors
 -x       set -o xtrace
 -t       sets --compact-summary
@@ -25,11 +26,12 @@ function usage() {
 EOF
 }
 
-while getopts :xhltnqS:cr:m flag
+while getopts :xhltnqS:b:cr:m flag
 do
   case ${flag} in
     S) stringsearch=(-S "${OPTARG}");;
     r) cc=${OPTARG};;
+    b) base=${OPTARG};;
     c) colors="never";;
     x) set -x;;
     t) diffargs=(--compact-summary);;
@@ -56,7 +58,7 @@ shift $((OPTIND - 1))
 args="$*"
 
 function get_hashes() {
-  hashes=($(git log "$cc" "${stringsearch[@]}" "${merges[@]}" --pretty=format:"%h" -- $args))
+  hashes=($(git log "${base:+${base}..}$cc" "${stringsearch[@]}" "${merges[@]}" --pretty=format:"%h" -- $args))
   size=${#hashes[@]}
   if ((size)); then
     cc=${hashes[$index]}

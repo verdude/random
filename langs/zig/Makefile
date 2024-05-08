@@ -12,9 +12,8 @@ rotation: rotation.zig
 	zig build-exe $(release) rotation.zig
 
 .PHONY: install clean
-install: rtmp rotation
+install: rtmp
 	install rtmp ../../thechosenones/
-	install rotation ../../thechosenones/
 
 clean:
 	git clean -xf$(dryclean)

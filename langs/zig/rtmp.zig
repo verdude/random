@@ -3,7 +3,7 @@ const fbai = std.heap.FixedBufferAllocator.init;
 const basename = std.fs.path.basename;
 const dirname = std.fs.path.dirname;
 const ai = std.process.ArgIterator;
-const rename = std.os.rename;
+const rename = std.posix.rename;
 
 const BuildError = error{NotEnoughMemory};
 
@@ -35,11 +35,11 @@ pub fn main() !u8 {
         return 1;
     };
 
-    var new_name: []u8 = try std.fmt.allocPrint(alloc, "{s}{s}", .{ tmpdir_prefix, name });
+    const new_name: []u8 = try std.fmt.allocPrint(alloc, "{s}{s}", .{ tmpdir_prefix, name });
     defer alloc.free(new_name);
 
     std.log.info("{s} -> {s}", .{ base, new_name });
-    try std.os.chdir(dn);
+    try std.posix.chdir(dn);
     try rename(base, new_name);
     return 0;
 }
