@@ -3,7 +3,7 @@
 set -euo pipefail
 
 cc=$(git rev-parse HEAD)
-declare -i index=0 size=0 useless=1 loud=1
+declare -i index=0 size=0 useless=1 loud=1 reverse=0
 stringsearch=()
 diffargs=()
 colors="always"
@@ -16,6 +16,7 @@ function usage() {
 -S <arg> stringsearch
 -r <arg> Set starting ref
 -b <arg> Set base ref
+-e       Reverse walk direction
 -c       Disable Colors
 -x       set -o xtrace
 -t       sets --compact-summary
@@ -26,12 +27,13 @@ function usage() {
 EOF
 }
 
-while getopts :xhltnqS:b:cr:m flag
+while getopts :xhltnqS:b:ecr:m flag
 do
   case ${flag} in
     S) stringsearch=(-S "${OPTARG}");;
     r) cc=${OPTARG};;
     b) base=${OPTARG};;
+    e) reverse=1;;
     c) colors="never";;
     x) set -x;;
     t) diffargs=(--compact-summary);;
@@ -60,17 +62,22 @@ args="$*"
 function get_hashes() {
   hashes=($(git log "${base:+${base}..}$cc" "${stringsearch[@]}" "${merges[@]}" --pretty=format:"%h" -- $args))
   size=${#hashes[@]}
-  if ((size)); then
-    cc=${hashes[$index]}
-  else
+  if ! ((size)); then
     echo "Nothing found."
     exit
   fi
+  if ((reverse)); then
+    index=$(($size - 1))
+  fi
+  cc=${hashes[$index]}
 }
 
 function next() {
-  index=$(($index + 1))
-  if [[ $index -lt $size ]]; then
+  if ((reverse)) && [[ $index -gt 0 ]]; then
+    index=$(($index - 1))
+    cc=${hashes[$index]}
+  elif ! ((reverse)) && [[ $(($index + 1)) -lt $size ]]; then
+    index=$(($index + 1))
     cc=${hashes[$index]}
   else
     echo "finished."
