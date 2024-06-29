@@ -4,10 +4,10 @@ set -Eeuo pipefail
 
 declare -i getdiff=0 reverse=0 untar=0 force=0
 DOTDIR=${DOTDIR:-}
+pcmddw=(security find-generic-password -a ek -s local -w)
 name="p"
 efile="p.enc"
 dfile="${name}.tar.gz"
-pfile="${HOME}/.secretpw"
 decrypt=""
 force=""
 cipher="chacha20"
@@ -77,11 +77,6 @@ trap _cleanup EXIT
 # decrypt or encrypt private files depending on
 # whether -d was passed in or not.
 function enc() {
-  if [[ ! -f "${pfile}" ]]; then
-    echo "enc: ${pfile} not found." >&2
-    exit 1
-  fi
-
   local dec=${1:-}
   local infile="${efile}"
   local outfile="${dfile}"
@@ -96,7 +91,8 @@ function enc() {
     exit 1
   fi
 
-  opensslargs=("enc" ${dec:+"${dec}"} "-pass" "file:${pfile}" "-${cipher}"
+  p=$("${pcmddw[@]}")
+  opensslargs=("enc" ${dec:+"${dec}"} "-pass" "pass:$p" "-${cipher}"
     "-in" "${infile}" "-out" "${outfile}" "-${keyderivation}")
 
   openssl ${opensslargs[@]}
