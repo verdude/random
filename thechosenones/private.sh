@@ -5,6 +5,7 @@ set -Eeuo pipefail
 declare -i getdiff=0 reverse=0 untar=0 force=0
 DOTDIR=${DOTDIR:-}
 pcmddw=(security find-generic-password -a ek -s local -w)
+pcmd=(secret-tool lookup service local application ek)
 name="p"
 efile="p.enc"
 dfile="${name}.tar.gz"
@@ -23,6 +24,7 @@ private=(
 
 if [[ "$OSTYPE" =~ darwin* ]]; then
   tarargs=()
+  pcmd=("$pcmddw[@]")
 fi
 
 function usage() {
@@ -91,7 +93,7 @@ function enc() {
     exit 1
   fi
 
-  p=$("${pcmddw[@]}")
+  p=$("${pcmd[@]}")
   opensslargs=("enc" ${dec:+"${dec}"} "-pass" "pass:$p" "-${cipher}"
     "-in" "${infile}" "-out" "${outfile}" "-${keyderivation}")
 
