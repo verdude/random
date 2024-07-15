@@ -253,7 +253,6 @@ add_scripts
 setup_git||:
 setup_folders
 setup_vim
-setup_tmux
 setup_dotfiles
 delete_self
 
