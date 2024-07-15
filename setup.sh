@@ -88,15 +88,6 @@ function setup_vim () {
   fi
 }
 
-function setup_tmux() {
-  [[ -n "$dry_run" ]] && echo "tmux setup" && return
-  if [[ -d ~/.tmux/plugins/tpm ]]; then
-    echo "tmux tpm already installed."
-  else
-    git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  fi
-}
-
 function setup_x_themes() {
   [[ -n "$dry_run" ]] && echo "setup folders" && return
   if [[ -d $GITDIR/Xresources-themes ]]; then
