@@ -24,7 +24,7 @@ private=(
 
 if [[ "$OSTYPE" =~ darwin* ]]; then
   tarargs=()
-  pcmd=("$pcmddw[@]")
+  pcmd=("${pcmddw[@]}")
 fi
 
 function usage() {
