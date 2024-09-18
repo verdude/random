@@ -25,3 +25,4 @@ vgcore.*
 zig-out
 zig-cache
 tags
+__pycache__
