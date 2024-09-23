@@ -2,6 +2,7 @@
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from platform import system
 import subprocess
 import smtplib
 
@@ -48,8 +49,24 @@ def parse_args():
 
 
 def get_credentials(fuwu):
+    if system() == "Linux":
+        cmd = [
+            "secret-tool", "lookup",
+            "fuwu", "jiyoujian",
+            "leixing", "yingyongmima",
+            "zhanghu", fuwu
+        ]
+    else:
+        cmd = [
+            "security", "find-generic-password",
+            "-a", fuwu,
+            "-s", "local",
+            "-w",
+            "mima",
+        ]
+
     result = subprocess.run(
-        ["security", "find-generic-password", "-a", fuwu, "-s", "local", "-w"],
+        cmd,
         capture_output=True,
         text=True,
     )
