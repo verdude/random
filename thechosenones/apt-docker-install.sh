@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -x
+set -uxEeo pipefail
 
 sudo apt-get remove -y docker docker-engine docker.io containerd runc
 
