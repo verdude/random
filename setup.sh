@@ -200,7 +200,7 @@ function setup_server() {
     sudo sed -Ei 's/required(\s*pam_shells.so)/sufficient\1/' /etc/pam.d/chsh
   fi
 
-  local myip=$(w -hfi | head -1 | awk '{print $2}')
+  local myip=$(w -hfi | head -1 | awk '{print $3}')
   sudo chsh -s $(which nologin) root
   sudo ufw allow from $myip
   (yes || true) | sudo ufw enable
