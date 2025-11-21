@@ -94,6 +94,11 @@ function enc() {
   fi
 
   p=$("${pcmd[@]}")
+  if [ -z $p ]; then
+    printf "Enter pw: "
+    p=$(</dev/stdin)
+  fi
+
   opensslargs=("enc" ${dec:+"${dec}"} "-pass" "pass:$p" "-${cipher}"
     "-in" "${infile}" "-out" "${outfile}" "-${keyderivation}")
 
