@@ -1,7 +1,7 @@
 fn binarySearch(nums: &[i32], target: i32) -> i32 {
     // max 10^9 for each num and max 10^6 nums
     // use isize, handles ~2 billion
-    // and won't wrap on low - 1 when low == 0
+    // and won't wrap on right - 1 when right == 0
     let mut left: isize = 0;
     let mut right: isize = nums.len() as isize - 1;
     let mut i: isize;
